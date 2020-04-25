@@ -95,3 +95,14 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
 ```
+11. Add rest-framework to INSTALLED_APPS
+```python
+INSTALLED_APPS = [
+    ...
+    'rest_framework',
+]
+```
+12. Run server
+```bash
+python manage.py runserver
+```
