@@ -14,6 +14,7 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 
     path('game/create_room/', views.create_room, name='create_room'),
+    path('game/join_room/', views.join_room, name='join_room'),
 
     path('admin/', admin.site.urls)
 ]

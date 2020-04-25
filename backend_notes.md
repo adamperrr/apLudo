@@ -95,14 +95,24 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
 ```
-11. Add rest-framework to INSTALLED_APPS
+11. Add rest-framework and apps to INSTALLED_APPS
 ```python
 INSTALLED_APPS = [
     ...
     'rest_framework',
+    'dlap_ludo',
+    'dlap_ludo.game'
 ]
 ```
 12. Run server
 ```bash
 python manage.py runserver
+```
+
+-----------------------------
+
+* After creation of models in game migrate them
+```bash
+python manage.py makemigrations game
+python manage.py migrate
 ```
