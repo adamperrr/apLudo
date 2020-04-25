@@ -31,3 +31,12 @@ django-admin startapp game
 # or
 python ../manage.py startapp game
 ```
+6. Migrate - create sqlite3 database and create tables for user's management in it
+```bash
+python manage.py migrate
+```
+7. Create superuser of the system
+```bash
+python manage.py createsuperuser --email admin@example.com --username admin
+# to development purposses assign password: admin
+```
