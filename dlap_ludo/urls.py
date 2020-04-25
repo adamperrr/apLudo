@@ -13,5 +13,7 @@ urlpatterns = [
     path('', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 
+    path('game/create_room/', views.create_room, name='create_room'),
+
     path('admin/', admin.site.urls)
 ]
