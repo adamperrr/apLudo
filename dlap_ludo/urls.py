@@ -13,6 +13,7 @@ urlpatterns = [
     # path('', include(router.urls)),
     # path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 
+    path('game/get_board/', views.get_board, name='get_board'),
     path('game/create_room/', views.create_room, name='create_room'),
     path('game/join_room/', views.join_room, name='join_room'),
 

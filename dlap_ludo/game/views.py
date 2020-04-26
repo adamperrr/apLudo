@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User, Group
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.utils.crypto import get_random_string
 
 from rest_framework import viewsets, permissions, status
 from rest_framework.parsers import JSONParser
@@ -10,6 +11,38 @@ from dlap_ludo.game.models import Room, Player
 
 from django.db import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
+
+PAWN_INDEX_TO_COLOR = ['blue', 'yellow', 'red', 'green', 'watcher']
+PAWN_COLOR_TO_INDEX = {'blue': 0, 'yellow': 1, 'red': 2, 'green': 3, 'watcher': 4}
+BOARD_FIELDS_DESC = { # according to board prepared by Domi
+    'blue': {
+        'start_field': 3,
+        'stop_field': 2,
+    },
+    'yellow': {
+        'start_field': 13,
+        'stop_field': 12,
+    },
+    'red': {
+        'start_field': 23,
+        'stop_field': 22,
+    },
+    'green': {
+        'start_field': 33,
+        'stop_field': 32,
+    },
+}
+PAWN_NOT_ON_THE_BOARD = -1
+PAWN_AT_THE_FINISH_LINE = -2
+EMPTY_BOARD = {
+    'pawns': {
+        'blue': [PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD],
+        'yellow': [PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD],
+        'red': [PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD],
+        'green': [PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD]
+    },
+    'user_playing_color': None,
+}
 
 @csrf_exempt
 def create_room(request):
@@ -24,8 +57,8 @@ def create_room(request):
     Response format will be:
     {
         'token': 'token_generated_by_app_and_required_for_every_request',
-        'room_id': 1234,
-        'is_player': true/false - did plyer get to the room as plyer or there was no place and is watcher
+        'is_player': true/false, // did plyer get to the room as plyer or there was no place and is watcher
+        'color': 'blue'
     }
 
     In case of error response status is different then 200:
@@ -49,13 +82,15 @@ def create_room(request):
                 room.save()
             except IntegrityError as e:
                 return JsonResponse({'room_name': 'room_name already taken'}, status=400)
-            player = Player(name=admin_player_username, is_admin=True, room=room)
+
+            token = get_random_string(length=64)
+            player = Player(name=admin_player_username, is_admin=True, room=room, token=token)
             player.save()
 
             response = {
-                "token": "--token--", # HARDCODED
-                'room_id': room.id,
-                "player": True
+                "token": token,
+                "is_player": True,
+                "color": PAWN_INDEX_TO_COLOR[0]
             }
 
             return JsonResponse(response, status=201)
@@ -75,8 +110,8 @@ def join_room(request):
     Response format will be:
     {
         'token': 'token_generated_by_app_and_required_for_every_request',
-        'room_id': 1234,
-        'is_player': true/false - did player get to the room as player or there was no place and is watcher
+        'is_player': true/false, // did player get to the room as player or there was no place and is watcher
+        'color': 'red'
     }
 
     In case of error response status is different then 200:
@@ -105,18 +140,34 @@ def join_room(request):
                 if player_in_room.name == player_username:
                     return JsonResponse({'player_username': 'player_username already exist in this room'}, status=400)
 
-            player = Player(name=player_username, is_admin=False, room=room)
+            token = get_random_string(length=64)
+            player = Player(name=player_username, is_admin=False, room=room, token=token)
             player.save()
 
+            color = PAWN_INDEX_TO_COLOR[4]
+            is_player = len(players_in_room) < 4
+            if is_player:
+                color = PAWN_INDEX_TO_COLOR[len(players_in_room) - 1]
+
             response = {
-                "token": "--token--", # HARDCODED
-                'room_id': room.id,
-                "plyer": (len(players_in_room) < 4)
+                "token": token,
+                "is_player": is_player,
+                "color": color
             }
 
             return JsonResponse(response, status=201)
 
         return JsonResponse(serializer.errors, status=400)
+
+
+@csrf_exempt
+def get_board(request):
+    pass
+
+
+@csrf_exempt
+def roll_cube(request):
+    pass
 
 
 class UserViewSet(viewsets.ModelViewSet):
