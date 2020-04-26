@@ -69,7 +69,7 @@ def join_room(request):
     The join_room view takes JSON message in format (to see requirements see serializers.py):
     {
         "room_name": "name_of_room",
-        "player_username": "username_of_room's_admin_player"
+        "player_username": "username_of_player"
     }
 
     Response format will be:
@@ -103,7 +103,7 @@ def join_room(request):
 
             for player_in_room in players_in_room:
                 if player_in_room.name == player_username:
-                    return JsonResponse({'room_name': 'username already exist in this room'}, status=400)
+                    return JsonResponse({'player_username': 'player_username already exist in this room'}, status=400)
 
             player = Player(name=player_username, is_admin=False, room=room)
             player.save()
