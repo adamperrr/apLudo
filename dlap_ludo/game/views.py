@@ -12,6 +12,8 @@ from dlap_ludo.game.models import Room, Player
 from django.db import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
 
+PAWN_NOT_ON_THE_BOARD_STATUS = -1
+PAWN_AT_THE_FINISH_LINE_STATUS = -2
 PAWN_INDEX_TO_COLOR = ['blue', 'yellow', 'red', 'green', 'watcher']
 PAWN_COLOR_TO_INDEX = {'blue': 0, 'yellow': 1, 'red': 2, 'green': 3, 'watcher': 4}
 BOARD_FIELDS_DESC = { # according to board prepared by Domi
@@ -32,17 +34,17 @@ BOARD_FIELDS_DESC = { # according to board prepared by Domi
         'stop_field': 32,
     },
 }
-PAWN_NOT_ON_THE_BOARD = -1
-PAWN_AT_THE_FINISH_LINE = -2
-EMPTY_BOARD = {
-    'pawns': {
-        'blue': [PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD],
-        'yellow': [PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD],
-        'red': [PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD],
-        'green': [PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD]
-    },
-    'user_playing_color': None,
-}
+
+# EMPTY_BOARD = {
+#     'game_started': False,
+#     'pawns': {
+#         'blue': [PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD],
+#         'yellow': [PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD],
+#         'red': [PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD],
+#         'green': [PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD]
+#     },
+#     'user_playing_color': None,
+# }
 
 @csrf_exempt
 def create_room(request):
@@ -83,14 +85,20 @@ def create_room(request):
             except IntegrityError as e:
                 return JsonResponse({'room_name': 'room_name already taken'}, status=400)
 
+            color = PAWN_INDEX_TO_COLOR[0]
+
             token = get_random_string(length=64)
-            player = Player(name=admin_player_username, is_admin=True, room=room, token=token)
+            player = Player(name=admin_player_username, is_admin=True, room=room, token=token, color=color)
             player.save()
+
+            board = {
+                
+            }
 
             response = {
                 "token": token,
                 "is_player": True,
-                "color": PAWN_INDEX_TO_COLOR[0]
+                "color": color
             }
 
             return JsonResponse(response, status=201)
@@ -140,14 +148,14 @@ def join_room(request):
                 if player_in_room.name == player_username:
                     return JsonResponse({'player_username': 'player_username already exist in this room'}, status=400)
 
-            token = get_random_string(length=64)
-            player = Player(name=player_username, is_admin=False, room=room, token=token)
-            player.save()
-
             color = PAWN_INDEX_TO_COLOR[4]
             is_player = len(players_in_room) < 4
             if is_player:
-                color = PAWN_INDEX_TO_COLOR[len(players_in_room) - 1]
+                color = PAWN_INDEX_TO_COLOR[len(players_in_room)]
+
+            token = get_random_string(length=64)
+            player = Player(name=player_username, room=room, token=token, color=color)
+            player.save()
 
             response = {
                 "token": token,
