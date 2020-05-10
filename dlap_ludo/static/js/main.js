@@ -1,4 +1,4 @@
-document.getElementById("create_room__submit_button").addEventListener("click", function(event) {
+document.getElementById("create_room__submit_button").addEventListener("click", event => {
     event.preventDefault()
 
     let errors_div = document.getElementById("create_room__errors");
@@ -39,20 +39,35 @@ document.getElementById("create_room__submit_button").addEventListener("click", 
         fetch('http://127.0.0.1:8000/game/create_room/', {
             method: "post",
             headers: new Headers(
-                {'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'}
+                {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                }
             ),
             body: JSON.stringify(request_message)
         })
-        .then(res => res.json())
-        .then(res => {
-            console.log("Dodałem użytkownika:");
-            console.log(res);
+        .then(
+            r =>  r.json().then(
+                data => ({ok: r.ok, status: r.status, body: data})
+            )
+        )
+        .then(response => {
+            if(!response.ok) {
+                console.log(response);
+                alert('ERROR (see console): ' + JSON.stringify(response.body));
+            }
+            else {
+                alert("Room created (see console)");
+            }
+        })
+        .catch(response => {
+             // Won't catch statuses 400, 404, 500 - it's only for connection errors
+             console.error(response)
         });
     }
 });
 
-document.getElementById("join_room__submit_button").addEventListener("click", function(event) {
+document.getElementById("join_room__submit_button").addEventListener("click", event => {
     event.preventDefault()
 
     let errors_div = document.getElementById("join_room__errors");

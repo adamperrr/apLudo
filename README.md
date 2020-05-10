@@ -1,11 +1,6 @@
-#DLAP Ludo
+# DLAP Ludo
 ## First start
-1. Install python3
+1. Clone project
 ```bash
-sudo apt install python3
+git clone https://github.com/adamperrr/dlap_ludo
 ```
-2. Install pip3
-```bash
-sudo apt install pip3
-```
-3. 
