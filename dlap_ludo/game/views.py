@@ -59,14 +59,15 @@ def create_room(request):
     {
         "is_private_room": true,
         "room_name": "name_of_room",
-        "admin_player_username": "username_of_room's_admin_plyer"
+        "admin_player_username": "username_of_room's_admin_plyer",
     }
 
     Response format will be:
     {
         'token': 'token_generated_by_app_and_required_for_every_request',
-        'is_player': true/false, // did plyer get to the room as plyer or there was no place and is watcher
         'color': 'blue'
+        'is_player': true/false, // did plyer get to the room as plyer or there was no place and is watcher
+        'is_admin': true/false // can start/stop game
     }
 
     In case of error response status is different then 200:
@@ -103,8 +104,9 @@ def create_room(request):
 
             response = {
                 "token": token,
+                "color": color,
                 "is_player": True,
-                "color": color
+                "is_admin": True
             }
 
             return JsonResponse(response, status=201)
@@ -124,8 +126,9 @@ def join_room(request):
     Response format will be:
     {
         'token': 'token_generated_by_app_and_required_for_every_request',
-        'is_player': true/false, // did player get to the room as player or there was no place and is watcher
         'color': 'red'
+        'is_player': true/false, // did plyer get to the room as plyer or there was no place and is watcher
+        'is_admin': true/false // can start/stop game
     }
 
     In case of error response status is different then 200:
@@ -165,8 +168,9 @@ def join_room(request):
 
             response = {
                 "token": token,
+                "color": color,
                 "is_player": is_player,
-                "color": color
+                "is_admin": False
             }
 
             return JsonResponse(response, status=201)

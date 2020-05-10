@@ -1,0 +1,1 @@
+const fetchPromise = fetch(“https://ghibliapi.herokuapp.com/people");

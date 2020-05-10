@@ -74,6 +74,23 @@
 
 
     <div class="container d-none" id="game__container">
+        <div class="row p-3 m-3">
+            <div class="col-2">
+                <button type="button" class="btn btn-lg btn-block btn-primary" id="game__start_game">Start game</button>
+            </div>
+            <div class="col-2">
+                <button type="button" class="btn btn-lg btn-block btn-primary" id="game__stop_game">Stop game</button>
+            </div>
+            <div class="col-2">
+                <button type="button" class="btn btn-lg btn-block btn-primary" id="game__leave_room">Leave room</button>
+            </div>
+            <div class="col-2 offset-2">
+                <button type="button" class="btn btn-lg btn-block btn-outline-primary" id="game__clean_session">Clean session</button>
+            </div>
+            <div class="col-2">
+                <button type="button" class="btn btn-lg btn-block btn-outline-primary" id="game__refresh_room">Refresh</button>
+            </div>
+        </div>
         <div class="card-deck mb-3 text-center">
             <div class="card mb-4 box-shadow">
                 <div class="card-header">
@@ -138,6 +155,8 @@
         </div>
     </div>
 
-    <script src="{% static 'js/main.js' %}"></script>
+    <script type="module" src="{% static 'js/main_events.js' %}"></script>
+    <script type="module" src="{% static 'js/main_fun.js' %}"></script>
+    <script type="module" src="{% static 'js/main.js' %}"></script>
 </body>
 </html>
