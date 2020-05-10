@@ -109,12 +109,12 @@ def stop_game(request):
             if not player.is_admin:
                 return JsonResponse({'is_admin': 'user is not admin'}, status=401)
 
-            # room = player.room
-            # players_in_room = Player.objects.filter(room_id=room.id)
-            # for player_in_room in players_in_room:
-            #     player_in_room.delete()
-            #
-            # room.delete()
+            room = player.room
+            players_in_room = Player.objects.filter(room_id=room.id)
+            for player_in_room in players_in_room:
+                player_in_room.delete()
+
+            room.delete()
 
             return JsonResponse({'ok': True}, status=201)
 
