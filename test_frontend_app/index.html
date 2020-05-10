@@ -22,9 +22,7 @@
             <div class="col-8 offset-4">
                 <form>
                     <h2>Create room</h2>
-                    <div class="alert alert-danger d-none" id="create_room__error_message" role="alert">
-                        <ul></ul>
-                    </div>
+                    <div id="create_room__errors" class="d-none">Errors list</div>
                     <div class="form-group">
                         <label for="create_room__room_name">Room name</label>
                         <input type="text" class="form-control" id="create_room__room_name" placeholder="Enter room name">
@@ -36,8 +34,8 @@
                         <small id="create_room__is_private_room_help" class="form-text text-muted">Public rooms will be visible on public list.</small>
                     </div>
                     <div class="form-group">
-                        <label for="create_room__admin_username">Username</label>
-                        <input type="text" class="form-control" id="create_room__admin_username" placeholder="Enter your username">
+                        <label for="create_room__admin_player_username">Player name</label>
+                        <input type="text" class="form-control" id="create_room__admin_player_username" placeholder="Enter your player username">
                     </div>
                     <div class="form-group mt-4">
                         <button type="submit" class="btn btn-primary" id="create_room__submit_button">Create room</button>
@@ -51,17 +49,15 @@
             <div class="col-8 offset-4">
                 <form>
                     <h2>Join room</h2>
-                    <div class="alert alert-danger d-none" id="join_room__error_message" role="alert">
-                        <ul></ul>
-                    </div>
+                    <div id="join_room__errors" class="d-none"></div>
                     <div class="form-group">
                         <label for="join_room__room_name">Room name</label>
                         <input type="text" class="form-control" id="join_room__room_name" placeholder="Enter room name">
                         <small id="join_room__room_name_help" class="form-text text-muted">Choose name of already created room.</small>
                     </div>
                     <div class="form-group">
-                        <label for="join_room__username">Username</label>
-                        <input type="text" class="form-control" id="join_room__username" placeholder="Enter your username">
+                        <label for="join_room__player_username">Player name</label>
+                        <input type="text" class="form-control" id="join_room__player_username" placeholder="Enter your player username">
                     </div>
                     <div class="form-group mt-4">
                         <button type="submit" class="btn btn-primary" id="join_room__submit_button">Join room</button>
