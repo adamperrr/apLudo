@@ -13,6 +13,11 @@ class JoinRoomSerializer(serializers.Serializer):
     player_username = serializers.CharField(min_length=8, max_length=50, allow_blank=False, trim_whitespace=True)
 
 
+class TokenSerializer(serializers.Serializer):
+    admin_player_username = serializers.CharField(min_length=8, max_length=50, allow_blank=False, trim_whitespace=True)
+    token = serializers.CharField(min_length=64, max_length=64, allow_blank=False, trim_whitespace=True)
+
+
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User

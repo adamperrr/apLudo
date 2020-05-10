@@ -1,4 +1,47 @@
-import {changeContainersState} from './main_fun.js'
+import {changeContainersState} from './test_front__functions.js'
+
+export function stopGameEvent(event) {
+    console.log('Stopping game...')
+    event.preventDefault()
+
+    let request_message = {
+        'token': sessionStorage.getItem("token"),
+        'admin_player_username': sessionStorage.getItem("player_username")
+    };
+
+    console.log(request_message);
+
+    fetch('http://127.0.0.1:8000/game/stop_game/', {
+        method: "post",
+        headers: new Headers(
+            {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            }
+        ),
+        body: JSON.stringify(request_message)
+    })
+    .then(
+        r =>  r.json().then(
+            data => ({ok: r.ok, status: r.status, body: data})
+        )
+    )
+    .then(response => {
+        console.log(response);
+        if(response.ok) {
+            alert("Game stopped (see console)");
+            sessionStorage.clear();
+            changeContainersState();
+        }
+        else {
+            alert('ERROR (see console): ' + JSON.stringify(response.body));
+        }
+    })
+    .catch(response => {
+        // Won't catch statuses 400, 404, 500 - it's only for connection errors
+        console.error("Error catched");
+     });
+}
 
 export function createRoomEvent(event) {
     event.preventDefault()
@@ -64,9 +107,10 @@ export function createRoomEvent(event) {
                 let isAdmin = response.body.is_admin;
 
                 sessionStorage.setItem("token", token);
+                sessionStorage.setItem("player_username", admin_player_username);
                 sessionStorage.setItem("color", color);
                 sessionStorage.setItem("isPlayer", isPlayer);
-                sessionStorage.setItem("isPlayer", isAdmin);
+                sessionStorage.setItem("isAdmin", isAdmin);
 
                 changeContainersState();
             }
@@ -143,9 +187,10 @@ export function joinRoomEvent(event) {
                 let isAdmin = response.body.is_admin;
 
                 sessionStorage.setItem("token", token);
+                sessionStorage.setItem("player_username", player_username);
                 sessionStorage.setItem("color", color);
                 sessionStorage.setItem("isPlayer", isPlayer);
-                sessionStorage.setItem("isPlayer", isAdmin);
+                sessionStorage.setItem("isAdmin", isAdmin);
 
                 changeContainersState();
             }

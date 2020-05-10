@@ -6,7 +6,7 @@ from django.utils.crypto import get_random_string
 from rest_framework import viewsets, permissions, status
 from rest_framework.parsers import JSONParser
 
-from dlap_ludo.game.serializers import CreateRoomSerializer, JoinRoomSerializer, UserSerializer, GroupSerializer
+from dlap_ludo.game.serializers import TokenSerializer, CreateRoomSerializer, JoinRoomSerializer, UserSerializer, GroupSerializer
 from dlap_ludo.game.models import Room, Player
 
 from django.db import IntegrityError
@@ -52,6 +52,46 @@ BOARD_FIELDS_DESC = { # according to board prepared by Domi
 def base_view(request):
     return render(request, 'base.html')
 
+
+@csrf_exempt
+def stop_game(request):
+    """
+    The stop_game view takes JSON message in format (to see requirements see serializers.py):
+    {
+        'token': 'token_generated_by_app_and_required_for_every_request',
+        'admin_player_username': 'admin_player_username'
+    }
+
+    Response status will be: 204
+    """
+    if request.method == 'POST':
+        data = JSONParser().parse(request)
+        serializer = TokenSerializer(data=data)
+        if serializer.is_valid():
+            token = serializer.data['token']
+            admin_player_username = serializer.data['admin_player_username']
+
+            print("OK: " + token, admin_player_username)
+
+            try:
+                player = Player.objects.get(token=token, name=admin_player_username)
+            except ObjectDoesNotExist:
+                return JsonResponse({'token': 'wrong token or admin_player_username'}, status=401)
+
+            if not player.is_admin:
+                return JsonResponse({'is_admin': 'user is not admin'}, status=401)
+
+            # room = player.room
+            # players_in_room = Player.objects.filter(room_id=room.id)
+            # for player_in_room in players_in_room:
+            #     player_in_room.delete()
+            #
+            # room.delete()
+
+            return JsonResponse({'ok': True}, status=201)
+
+        return JsonResponse(serializer.errors, status=400)
+
 @csrf_exempt
 def create_room(request):
     """
@@ -94,7 +134,8 @@ def create_room(request):
 
             color = PAWN_INDEX_TO_COLOR[0]
 
-            token = get_random_string(length=64)
+            # token = get_random_string(length=64)
+            token = '0000000000000000000000000000000000000000000000000000000000000000'
             player = Player(name=admin_player_username, is_admin=True, room=room, token=token, color=color)
             player.save()
 
@@ -162,7 +203,8 @@ def join_room(request):
             if is_player:
                 color = PAWN_INDEX_TO_COLOR[len(players_in_room)]
 
-            token = get_random_string(length=64)
+            # token = get_random_string(length=64)
+            token = '0000000000000000000000000000000000000000000000000000000000000000'
             player = Player(name=player_username, room=room, token=token, color=color)
             player.save()
 
