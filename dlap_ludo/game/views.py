@@ -12,6 +12,8 @@ from dlap_ludo.game.models import Room, Player
 from django.db import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
 
+from django.shortcuts import render  # only form base view
+
 PAWN_NOT_ON_THE_BOARD_STATUS = -1
 PAWN_AT_THE_FINISH_LINE_STATUS = -2
 PAWN_INDEX_TO_COLOR = ['blue', 'yellow', 'red', 'green', 'watcher']
@@ -45,6 +47,10 @@ BOARD_FIELDS_DESC = { # according to board prepared by Domi
 #     },
 #     'user_playing_color': None,
 # }
+
+@csrf_exempt
+def base_view(request):
+    return render(request, 'base.html')
 
 @csrf_exempt
 def create_room(request):

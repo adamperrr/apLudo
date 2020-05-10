@@ -4,22 +4,140 @@
 
 <head>
     <meta charset="UTF-8">
-    <!--  <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
-    <!--  <meta http-equiv="X-UA-Compatible" content="ie=edge">-->
-    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="author" content="Adam Pertek">
+    <meta name="description" content="Test Frontend App for DLAP LUDO">
 
-    <!--  <title>BT Real Estate {% block title %}{% endblock %}</title>-->
-    <title>BT Real Estate {% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+
+    <title>Test Frontend App - DLAP LUDO</title>
 </head>
 <body>
-    <!--  &lt;!&ndash; Top Bar &ndash;&gt;-->
-    <!--  {% include 'partials/_topbar.html' %}-->
-    <!--  &lt;!&ndash; NavBar &ndash;&gt;-->
-    <!--  {% include 'partials/_navbar.html' %}-->
-    <!--    &lt;!&ndash; Main Content &ndash;&gt;-->
-    {% block content %} {% endblock %}
-    <!--  &lt;!&ndash; Footer &ndash;&gt;-->
-    <!--  {% include 'partials/_footer.html' %}-->
+    <div class="alert alert-danger" role="alert">Open JavaScript console to see full output of the application.</div>
+
+    <div class="px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+        <h1 class="display-4">DLAP LUDO</h1>
+        <p class="lead">Test Frontend App</p>
+    </div>
+
+    <div class="container p-1 m-2" id="create_room__container">
+        <div class="row">
+            <div class="col-8 offset-4">
+                <form>
+                    <h2>Create room</h2>
+                    <div id="create_room__errors" class="d-none">Errors list</div>
+                    <div class="form-group">
+                        <label for="create_room__room_name">Room name</label>
+                        <input type="text" class="form-control" id="create_room__room_name" placeholder="Enter room name">
+                        <small id="create_room__room_name_help" class="form-text text-muted">Choose unique name of room you wan to create. Other players will get to your room by its name.</small>
+                    </div>
+                    <div class="form-check mb-2 mt-2">
+                        <input type="checkbox" class="form-check-input" id="create_room__is_private_room">
+                        <label class="form-check-label" for="create_room__is_private_room">Private room</label>
+                        <small id="create_room__is_private_room_help" class="form-text text-muted">Public rooms will be visible on public list.</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="create_room__admin_player_username">Player name</label>
+                        <input type="text" class="form-control" id="create_room__admin_player_username" placeholder="Enter your player username">
+                    </div>
+                    <div class="form-group mt-4">
+                        <button type="submit" class="btn btn-primary" id="create_room__submit_button">Create room</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="container p-1 m-2" id="join_room__container">
+        <div class="row">
+            <div class="col-8 offset-4">
+                <form>
+                    <h2>Join room</h2>
+                    <div id="join_room__errors" class="d-none"></div>
+                    <div class="form-group">
+                        <label for="join_room__room_name">Room name</label>
+                        <input type="text" class="form-control" id="join_room__room_name" placeholder="Enter room name">
+                        <small id="join_room__room_name_help" class="form-text text-muted">Choose name of already created room.</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="join_room__player_username">Player name</label>
+                        <input type="text" class="form-control" id="join_room__player_username" placeholder="Enter your player username">
+                    </div>
+                    <div class="form-group mt-4">
+                        <button type="submit" class="btn btn-primary" id="join_room__submit_button">Join room</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container d-none" id="game__container">
+        <div class="card-deck mb-3 text-center">
+            <div class="card mb-4 box-shadow">
+                <div class="card-header">
+                    <h4 class="my-0 font-weight-normal">Free</h4>
+                </div>
+                <div class="card-body">
+                    <h1 class="card-title">$0 <small class="text-muted">/ mo</small></h1>
+                    <ul class="list-unstyled mt-3 mb-4">
+                        <li>10 users included</li>
+                        <li>2 GB of storage</li>
+                        <li>Email support</li>
+                        <li>Help center access</li>
+                    </ul>
+                    <button type="button" class="btn btn-lg btn-block btn-outline-primary">Sign up for free</button>
+                </div>
+            </div>
+            <div class="card mb-4 box-shadow">
+                <div class="card-header">
+                    <h4 class="my-0 font-weight-normal">Pro</h4>
+                </div>
+                <div class="card-body">
+                    <h1 class="card-title">$15 <small class="text-muted">/ mo</small></h1>
+                    <ul class="list-unstyled mt-3 mb-4">
+                        <li>20 users included</li>
+                        <li>10 GB of storage</li>
+                        <li>Priority email support</li>
+                        <li>Help center access</li>
+                    </ul>
+                    <button type="button" class="btn btn-lg btn-block btn-primary">Get started</button>
+                </div>
+            </div>
+            <div class="card mb-4 box-shadow">
+                <div class="card-header">
+                    <h4 class="my-0 font-weight-normal">Enterprise</h4>
+                </div>
+                <div class="card-body">
+                    <h1 class="card-title">$29 <small class="text-muted">/ mo</small></h1>
+                    <ul class="list-unstyled mt-3 mb-4">
+                        <li>30 users included</li>
+                        <li>15 GB of storage</li>
+                        <li>Phone and email support</li>
+                        <li>Help center access</li>
+                    </ul>
+                    <button type="button" class="btn btn-lg btn-block btn-primary">Contact us</button>
+                </div>
+            </div>
+            <div class="card mb-4 box-shadow">
+                <div class="card-header">
+                    <h4 class="my-0 font-weight-normal">Enterprise</h4>
+                </div>
+                <div class="card-body">
+                    <h1 class="card-title">$29 <small class="text-muted">/ mo</small></h1>
+                    <ul class="list-unstyled mt-3 mb-4">
+                        <li>30 users included</li>
+                        <li>15 GB of storage</li>
+                        <li>Phone and email support</li>
+                        <li>Help center access</li>
+                    </ul>
+                    <button type="button" class="btn btn-lg btn-block btn-primary">Contact us</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="{% static 'js/main.js' %}"></script>
 </body>
 </html>
