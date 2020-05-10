@@ -1,26 +1,17 @@
 import {changeContainersState} from './test_front__functions.js'
+import * as promisesCollector from './test_front__promises.js'
 
 export function stopGameEvent(event) {
-    console.log('Stopping game...')
     event.preventDefault()
 
     let request_message = {
         'token': sessionStorage.getItem("token"),
-        'admin_player_username': sessionStorage.getItem("player_username")
+        'player_username': sessionStorage.getItem("player_username")
     };
 
     console.log(request_message);
 
-    fetch('http://127.0.0.1:8000/game/stop_game/', {
-        method: "post",
-        headers: new Headers(
-            {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            }
-        ),
-        body: JSON.stringify(request_message)
-    })
+    promisesCollector.stopGamePromise(request_message)
     .then(
         r =>  r.json().then(
             data => ({ok: r.ok, status: r.status, body: data})
@@ -47,7 +38,7 @@ export function createRoomEvent(event) {
     event.preventDefault()
 
     let errors_div = document.getElementById("create_room__errors");
-    errors_div.innerHTML = ''; // Remove all child elements - old error list
+    errors_div.innerHTML = ''; // Remove all child elements of old error list
     let errors = [];
 
     let room_name = document.getElementById("create_room__room_name").value.trim();
@@ -81,16 +72,7 @@ export function createRoomEvent(event) {
             "admin_player_username": admin_player_username
         };
 
-        fetch('http://127.0.0.1:8000/game/create_room/', {
-            method: "post",
-            headers: new Headers(
-                {
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*'
-                }
-            ),
-            body: JSON.stringify(request_message)
-        })
+        promisesCollector.createRoomPromise(request_message)
         .then(
             r =>  r.json().then(
                 data => ({ok: r.ok, status: r.status, body: data})
@@ -161,16 +143,7 @@ export function joinRoomEvent(event) {
             "player_username": player_username
         };
 
-        fetch('http://127.0.0.1:8000/game/join_room/', {
-            method: "post",
-            headers: new Headers(
-                {
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*'
-                }
-            ),
-            body: JSON.stringify(request_message)
-        })
+        promisesCollector.joinRoomPromise(request_message)
         .then(
             r =>  r.json().then(
                 data => ({ok: r.ok, status: r.status, body: data})

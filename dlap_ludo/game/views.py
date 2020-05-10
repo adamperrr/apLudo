@@ -54,6 +54,36 @@ def base_view(request):
 
 
 @csrf_exempt
+def check_token(request):
+    """
+    The check_token view takes JSON message in format (to see requirements see serializers.py):
+    {
+        'token': 'token_generated_by_app_and_required_for_every_request',
+        'admin_player_username': 'admin_player_username'
+    }
+
+    Response status will be: 204
+    """
+    if request.method == 'POST':
+        data = JSONParser().parse(request)
+        serializer = TokenSerializer(data=data)
+        if serializer.is_valid():
+            token = serializer.data['token']
+            player_username = serializer.data['player_username']
+
+            token_ok = True
+
+            try:
+                player = Player.objects.get(token=token, name=player_username)
+            except ObjectDoesNotExist:
+                token_ok = False
+
+            return JsonResponse({'token_ok': token_ok}, status=201)
+
+        return JsonResponse({'token_ok': False}, status=201)
+
+
+@csrf_exempt
 def stop_game(request):
     """
     The stop_game view takes JSON message in format (to see requirements see serializers.py):
@@ -69,12 +99,10 @@ def stop_game(request):
         serializer = TokenSerializer(data=data)
         if serializer.is_valid():
             token = serializer.data['token']
-            admin_player_username = serializer.data['admin_player_username']
-
-            print("OK: " + token, admin_player_username)
+            player_username = serializer.data['player_username']
 
             try:
-                player = Player.objects.get(token=token, name=admin_player_username)
+                player = Player.objects.get(token=token, name=player_username)
             except ObjectDoesNotExist:
                 return JsonResponse({'token': 'wrong token or admin_player_username'}, status=401)
 
