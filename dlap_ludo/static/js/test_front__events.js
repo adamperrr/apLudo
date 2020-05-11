@@ -1,4 +1,4 @@
-import {changeContainersState} from './test_front__functions.js'
+import {changeContainersState, displayErrors, errorsFromResponseBodyToArray} from './test_front__functions.js'
 import * as promisesCollector from './test_front__promises.js'
 
 export function stopGameEvent(event) {
@@ -9,8 +9,6 @@ export function stopGameEvent(event) {
         'player_username': sessionStorage.getItem("player_username")
     };
 
-    console.log(request_message);
-
     promisesCollector.stopGamePromise(request_message)
     .then(
         r =>  r.json().then(
@@ -18,53 +16,34 @@ export function stopGameEvent(event) {
         )
     )
     .then(response => {
-        console.log(response);
         if(response.ok) {
             alert("Game stopped (see console)");
             sessionStorage.clear();
             changeContainersState();
         }
         else {
-            alert('ERROR (see console): ' + JSON.stringify(response.body));
+            console.error("[stopGameEvent (!response.ok)]", response);
         }
     })
-    .catch(response => {
+    .catch(error => {
         // Won't catch statuses 400, 404, 500 - it's only for connection errors
-        console.error("Error catched");
+        console.error("[stopGameEvent (catch)]", error);
      });
 }
 
 export function createRoomEvent(event) {
     event.preventDefault()
-
-    let errors_div = document.getElementById("create_room__errors");
-    errors_div.innerHTML = ''; // Remove all child elements of old error list
     let errors = [];
 
+    // Validate variables
     let room_name = document.getElementById("create_room__room_name").value.trim();
     if(room_name === "") { errors.push("Room name can't be empty.") }
-
     let is_private = document.getElementById("create_room__is_private_room").checked;
-
     let admin_player_username = document.getElementById("create_room__admin_player_username").value.trim();
     if(admin_player_username === "") { errors.push("Player username can't be empty.") }
 
-
     if(errors.length > 0) {
-        let ul = document.createElement('ul');
-        ul.classList.add('list-group', 'm-2');
-
-        errors.forEach(function(entry) {
-            let li = document.createElement("li");
-            li.classList.add('list-group-item', 'list-group-item-danger');
-
-            let li_text = document.createTextNode(entry);
-            li.appendChild(li_text);
-            ul.appendChild(li);
-        });
-
-        errors_div.appendChild(ul);
-        errors_div.classList.remove("d-none");
+        displayErrors("create_room__errors", errors);
     } else {
         let request_message = {
             "is_private_room": is_private,
@@ -83,59 +62,39 @@ export function createRoomEvent(event) {
             if(response.ok) {
                 alert("Room created (see console)");
 
-                let token = response.body.token;
-                let color = response.body.color;
-                let isPlayer = response.body.is_player;
-                let isAdmin = response.body.is_admin;
-
-                sessionStorage.setItem("token", token);
+                sessionStorage.setItem("token", response.body.token);
                 sessionStorage.setItem("player_username", admin_player_username);
-                sessionStorage.setItem("color", color);
-                sessionStorage.setItem("isPlayer", isPlayer);
-                sessionStorage.setItem("isAdmin", isAdmin);
+                sessionStorage.setItem("color", response.body.color);
+                sessionStorage.setItem("isPlayer", response.body.is_player);
+                sessionStorage.setItem("isAdmin", response.body.is_admin);
 
                 changeContainersState();
             }
             else {
-                alert('ERROR (see console): ' + JSON.stringify(response.body));
+                let errors = errorsFromResponseBodyToArray(response.body);
+                displayErrors("create_room__errors", errors);
+                console.error("[createRoomEvent (!response.ok)]", response);
             }
         })
-        .catch(response => {
+        .catch(error => {
              // Won't catch statuses 400, 404, 500 - it's only for connection errors
-             console.error(response)
+            console.error("[createRoomEvent (catch)]", error);
         });
     }
 }
 
 export function joinRoomEvent(event) {
     event.preventDefault()
-
-    let errors_div = document.getElementById("join_room__errors");
-    errors_div.innerHTML = ''; // Remove all child elements - old error list
     let errors = [];
 
+    // Validate variables
     let room_name = document.getElementById("join_room__room_name").value.trim();
     if(room_name === "") { errors.push("Room name can't be empty.") }
-
     let player_username = document.getElementById("join_room__player_username").value.trim();
     if(player_username === "") { errors.push("Player username can't be empty.") }
 
-
     if(errors.length > 0) {
-        let ul = document.createElement('ul');
-        ul.classList.add('list-group', 'm-2');
-
-        errors.forEach(function(entry) {
-            let li = document.createElement("li");
-            li.classList.add('list-group-item', 'list-group-item-danger');
-
-            let li_text = document.createTextNode(entry);
-            li.appendChild(li_text);
-            ul.appendChild(li);
-        });
-
-        errors_div.appendChild(ul);
-        errors_div.classList.remove("d-none");
+        displayErrors("join_room__errors", errors);
     }
     else{
         let request_message = {
@@ -150,30 +109,25 @@ export function joinRoomEvent(event) {
             )
         )
         .then(response => {
-            console.log(response);
             if(response.ok) {
-                alert("Joined room (see console)");
+                alert("Joined room");
 
-                let token = response.body.token;
-                let color = response.body.color;
-                let isPlayer = response.body.is_player;
-                let isAdmin = response.body.is_admin;
-
-                sessionStorage.setItem("token", token);
+                sessionStorage.setItem("token", response.body.token);
                 sessionStorage.setItem("player_username", player_username);
-                sessionStorage.setItem("color", color);
-                sessionStorage.setItem("isPlayer", isPlayer);
-                sessionStorage.setItem("isAdmin", isAdmin);
+                sessionStorage.setItem("color", response.body.color);
+                sessionStorage.setItem("isPlayer", response.body.is_player);
+                sessionStorage.setItem("isAdmin", response.body.is_admin);
 
                 changeContainersState();
             }
             else {
-                alert('ERROR (see console): ' + JSON.stringify(response.body));
+                let errors = errorsFromResponseBodyToArray(response.body);
+                console.error("[joinRoomEvent (!response.ok)]", response);
             }
         })
-        .catch(response => {
+        .catch(error => {
              // Won't catch statuses 400, 404, 500 - it's only for connection errors
-             console.error(response)
+            console.error("[joinRoomEvent (catch)]", error);
         });
     }
 }
