@@ -162,8 +162,8 @@ def create_room(request):
 
             color = PAWN_INDEX_TO_COLOR[0]
 
-            # token = get_random_string(length=64)
-            token = '0000000000000000000000000000000000000000000000000000000000000000'
+            token = get_random_string(length=64)
+            # token = '0000000000000000000000000000000000000000000000000000000000000000'
             player = Player(name=admin_player_username, is_admin=True, room=room, token=token, color=color)
             player.save()
 
@@ -231,8 +231,8 @@ def join_room(request):
             if is_player:
                 color = PAWN_INDEX_TO_COLOR[len(players_in_room)]
 
-            # token = get_random_string(length=64)
-            token = '0000000000000000000000000000000000000000000000000000000000000000'
+            token = get_random_string(length=64)
+            # token = '0000000000000000000000000000000000000000000000000000000000000000'
             player = Player(name=player_username, room=room, token=token, color=color)
             player.save()
 

@@ -7,7 +7,7 @@ class Room(models.Model):
     is_private = models.BooleanField(default=True)
     board = models.TextField(default='') # to store json object
 
-    def __str__(self): # whet will be displayed in admin menu
+    def __str__(self):  # will be displayed in admin menu
         return self.name
 
     class Meta:
@@ -23,7 +23,7 @@ class Player(models.Model):
     color = models.CharField(max_length=10, blank=False, default='')
     room = models.ForeignKey(to=Room, null=True, on_delete=models.SET_NULL)
 
-    def __str__(self): # whet will be displayed in admin menu
+    def __str__(self):  # will be displayed in admin menu
         return self.name
 
     class Meta:
