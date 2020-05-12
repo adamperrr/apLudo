@@ -25,7 +25,7 @@ export function stopGamePromise(request_message) {
 }
 
 export function createRoomPromise(request_message) {
-    return fetch('http://127.0.0.1:8000/game/create_room/', {
+    return fetch('http://127.0.0.1:8000/create_room/', {
         method: "post",
         headers: new Headers(
             {
@@ -38,7 +38,7 @@ export function createRoomPromise(request_message) {
 }
 
 export function joinRoomPromise(request_message) {
-    return fetch('http://127.0.0.1:8000/game/join_room/', {
+    return fetch('http://127.0.0.1:8000/join_room/', {
         method: "post",
         headers: new Headers(
             {
