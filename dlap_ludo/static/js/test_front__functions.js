@@ -57,12 +57,12 @@ export function gameState() {
     document.getElementById("chat__container").classList.remove("d-none");
 
     document.getElementById("player_data__container").classList.remove("d-none");
-    document.getElementById("player_data__value_room_name").textContent = sessionStorage.getItem("roomName");
-    document.getElementById("player_data__value_player_username").textContent = sessionStorage.getItem("playerUsername");
-    document.getElementById("player_data__value_token").textContent = sessionStorage.getItem("token");
-    document.getElementById("player_data__value_is_admin").textContent = sessionStorage.getItem("isAdmin");
-    document.getElementById("player_data__value_is_player").textContent = sessionStorage.getItem("isPlayer");
-    document.getElementById("player_data__value_color").textContent = sessionStorage.getItem("color");
+    document.querySelector("#player_data__value_room_name div:first-child").textContent = sessionStorage.getItem("roomName");
+    document.querySelector("#player_data__value_player_username div:first-child").textContent = sessionStorage.getItem("playerUsername");
+    document.querySelector("#player_data__value_token div:first-child").textContent = sessionStorage.getItem("token");
+    document.querySelector("#player_data__value_is_admin div:first-child").textContent = sessionStorage.getItem("isAdmin");
+    document.querySelector("#player_data__value_is_player div:first-child").textContent = sessionStorage.getItem("isPlayer");
+    document.querySelector("#player_data__value_color div:first-child").textContent = sessionStorage.getItem("color");
 
     document.getElementById("game__container").classList.remove("d-none");
 }
