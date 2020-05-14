@@ -133,7 +133,3 @@ export function joinRoomEvent(event) {
         });
     }
 }
-
-export function sendChatMessageEvent(event) {
-
-}
