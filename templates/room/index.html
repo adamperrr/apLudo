@@ -21,47 +21,15 @@
     <h1 class="display-4">DLAP LUDO</h1>
     <p class="lead">Test Frontend App</p>
 </div>
+<div class="text-center d-none" id="room_name__header">
+    <h2 class="display-5">Room: <b id="room_name__title">Name of room</b></h2>
+</div>
 
 {% include 'partials/room_initialization/create_room__form.html' %}
 {% include 'partials/room_initialization/join_room__form.html' %}
 
-    <textarea id="chat-log" cols="100" rows="20"></textarea><br>
-    <input id="chat-message-input" type="text" size="100"><br>
-    <input id="chat-message-submit" type="button" value="Send">
-    <script>
-        const roomName = "pokoik";
-
-        const chatSocket = new WebSocket(
-            'ws://' + window.location.host + '/ws/chat/' + roomName + '/'
-        );
-
-        chatSocket.onmessage = function(e) {
-            const data = JSON.parse(e.data);
-            document.querySelector('#chat-log').value += (data.message + '\n');
-        };
-
-        chatSocket.onclose = function(e) {
-            console.error('Chat socket closed unexpectedly');
-        };
-
-        document.querySelector('#chat-message-input').focus();
-        document.querySelector('#chat-message-input').onkeyup = function(e) {
-            if (e.keyCode === 13) {  // enter, return
-                document.querySelector('#chat-message-submit').click();
-            }
-        };
-
-        document.querySelector('#chat-message-submit').onclick = function(e) {
-            const messageInputDom = document.querySelector('#chat-message-input');
-            const message = messageInputDom.value;
-            chatSocket.send(JSON.stringify({
-                'message': message
-            }));
-            messageInputDom.value = '';
-        };
-    </script>
-
-{% include 'partials/game/player_data__table.html' %}
+{% include 'partials/game/player_data.html' %}
+{% include 'partials/game/chat.html' %}
 {% include 'partials/game/game.html' %}
 
 <script type="module" src="{% static 'js/test_front__events.js' %}"></script>

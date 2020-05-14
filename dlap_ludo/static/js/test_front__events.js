@@ -6,7 +6,7 @@ export function stopGameEvent(event) {
 
     let request_message = {
         'token': sessionStorage.getItem("token"),
-        'player_username': sessionStorage.getItem("player_username")
+        'player_username': sessionStorage.getItem("playerUsername")
     };
 
     promisesCollector.stopGamePromise(request_message)
@@ -62,8 +62,9 @@ export function createRoomEvent(event) {
             if(response.ok) {
                 alert("Room created (see console)");
 
+                sessionStorage.setItem("roomName", room_name);
                 sessionStorage.setItem("token", response.body.token);
-                sessionStorage.setItem("player_username", admin_player_username);
+                sessionStorage.setItem("playerUsername", admin_player_username);
                 sessionStorage.setItem("color", response.body.color);
                 sessionStorage.setItem("isPlayer", response.body.is_player);
                 sessionStorage.setItem("isAdmin", response.body.is_admin);
@@ -112,8 +113,9 @@ export function joinRoomEvent(event) {
             if(response.ok) {
                 alert("Joined room");
 
+                sessionStorage.setItem("roomName", room_name);
                 sessionStorage.setItem("token", response.body.token);
-                sessionStorage.setItem("player_username", player_username);
+                sessionStorage.setItem("playerUsername", player_username);
                 sessionStorage.setItem("color", response.body.color);
                 sessionStorage.setItem("isPlayer", response.body.is_player);
                 sessionStorage.setItem("isAdmin", response.body.is_admin);
@@ -130,4 +132,8 @@ export function joinRoomEvent(event) {
             console.error("[joinRoomEvent (catch)]", error);
         });
     }
+}
+
+export function sendChatMessageEvent(event) {
+
 }

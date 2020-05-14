@@ -1,6 +1,9 @@
 import * as eventsFunCollector from './test_front__events.js'
 
 export function assignEvents() {
+//    document.getElementById("chat__send_button")
+//        .addEventListener("click", event => eventsFunCollector.sendChatMessageEvent(event));
+
     document.getElementById("game__stop_game_button")
         .addEventListener("click", event => eventsFunCollector.stopGameEvent(event));
 
