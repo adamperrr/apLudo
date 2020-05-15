@@ -2,9 +2,11 @@ import * as eventsFunCollector from './test_front__events.js'
 
 export function assignEvents() {
     const roomName = encodeURIComponent(sessionStorage.getItem("roomName"));
-    const chatSocket = new WebSocket(`ws:\/\/${window.location.host}\/ws\/chat\/${roomName}\/`);
+    const chatSocket = new WebSocket(`ws:\/\/${window.location.host}\/ws\/room\/${roomName}\/`);
+
     chatSocket.onmessage = function(e) {
         const data = JSON.parse(e.data);
+        console.log(data);
         document.querySelector('#chat__log').value = data.message + '\n' + document.querySelector('#chat__log').value;
     };
 
