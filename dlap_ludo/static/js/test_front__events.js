@@ -1,7 +1,7 @@
 import {changeContainersState, displayErrors, errorsFromResponseBodyToArray} from './test_front__functions.js'
 import * as promisesCollector from './test_front__promises.js'
 
-export function stopGameEvent(event) {
+export function stopGameEvent(event, connWebSocket) {
     event.preventDefault()
 
     let request_message = {
@@ -20,6 +20,12 @@ export function stopGameEvent(event) {
             alert("Game stopped (see console)");
             sessionStorage.clear();
             changeContainersState();
+
+            const wsMessageContent = {
+                'type': 'game_message',
+                'message': 'stop'
+            };
+            connWebSocket.send(JSON.stringify(wsMessageContent));
         }
         else {
             console.error("[stopGameEvent (!response.ok)]", response);

@@ -4,14 +4,16 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.crypto import get_random_string
 from django.shortcuts import render  # only form base view
 
-from django.db import IntegrityError
+from django.db import IntegrityError, transaction
 from django.core.exceptions import ObjectDoesNotExist
 
 from rest_framework import viewsets, permissions
 from rest_framework.parsers import JSONParser
 
 from dlap_ludo.room.serializers import CreateRoomSerializer, JoinRoomSerializer, UserSerializer, GroupSerializer
-from dlap_ludo.room.models import Room, Player
+from dlap_ludo.room.models import Room, Player, Game
+
+import json
 
 
 PAWN_NOT_ON_THE_BOARD_STATUS = -1
@@ -37,17 +39,13 @@ BOARD_FIELDS_DESC = {  # according to board prepared by Domi
     },
 }
 
+EMPTY_PLAYER_PAWNS = [PAWN_NOT_ON_THE_BOARD_STATUS, PAWN_NOT_ON_THE_BOARD_STATUS, PAWN_NOT_ON_THE_BOARD_STATUS, PAWN_NOT_ON_THE_BOARD_STATUS]
 
-# EMPTY_BOARD = {
-#     'game_started': False,
-#     'pawns': {
-#         'blue': [PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD],
-#         'yellow': [PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD],
-#         'red': [PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD],
-#         'green': [PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD]
-#     },
-#     'user_playing_color': None,
-# }
+EMPTY_BOARD = {
+    'pawns': {
+    },
+    'user_playing_color': None,
+}
 
 
 @csrf_exempt
@@ -56,6 +54,7 @@ def index_view(request):
 
 
 @csrf_exempt
+@transaction.non_atomic_requests
 def create_room(request):
     """
     The create_room view takes JSON message in format (to see requirements see serializers.py):
@@ -97,14 +96,18 @@ def create_room(request):
 
             color = PAWN_INDEX_TO_COLOR[0]
 
+            board = EMPTY_BOARD
+            board['pawns'][color] = EMPTY_PLAYER_PAWNS
+            game = Game(is_started=False, board=json.dumps(board), room=room)
+            try:
+                game.save()
+            except IntegrityError as e:
+                return JsonResponse({'room': 'game for this room already exist'}, status=400)
+
             token = get_random_string(length=64)
             # token = '0000000000000000000000000000000000000000000000000000000000000000'
             player = Player(name=admin_player_username, is_admin=True, room=room, token=token, color=color)
             player.save()
-
-            board = {
-
-            }
 
             response = {
                 "token": token,
@@ -119,6 +122,7 @@ def create_room(request):
 
 
 @csrf_exempt
+@transaction.non_atomic_requests
 def join_room(request):
     """
     The join_room view takes JSON message in format (to see requirements see serializers.py):
@@ -153,7 +157,12 @@ def join_room(request):
             try:
                 room = Room.objects.get(name=room_name)
             except ObjectDoesNotExist:
-                return JsonResponse({'room_name': 'room doesn\'t exist'}, status=400)
+                return JsonResponse({'room_name': 'room object doesn\'t exist'}, status=400)
+
+            try:
+                game = Game.objects.get(room=room)
+            except ObjectDoesNotExist:
+                return JsonResponse({'room': 'game object doesn\'t exist'}, status=400)
 
             players_in_room = Player.objects.filter(room_id=room.id)
 
@@ -162,7 +171,7 @@ def join_room(request):
                     return JsonResponse({'player_username': 'player_username already exist in this room'}, status=400)
 
             color = PAWN_INDEX_TO_COLOR[4]
-            is_player = len(players_in_room) < 4
+            is_player = len(players_in_room) < 4 and (not game.is_started)
             if is_player:
                 color = PAWN_INDEX_TO_COLOR[len(players_in_room)]
 
@@ -170,6 +179,12 @@ def join_room(request):
             # token = '0000000000000000000000000000000000000000000000000000000000000000'
             player = Player(name=player_username, room=room, token=token, color=color)
             player.save()
+
+            if not game.is_started and PAWN_COLOR_TO_INDEX[player.color] < 4:  # is not watcher
+                board = json.loads(game.board)
+                board['pawns'][color] = EMPTY_PLAYER_PAWNS
+                game.board = json.dumps(board)
+                game.save()
 
             response = {
                 "token": token,

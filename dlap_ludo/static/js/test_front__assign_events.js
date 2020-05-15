@@ -1,17 +1,24 @@
 import * as eventsFunCollector from './test_front__events.js'
+import {changeContainersState} from './test_front__functions.js'
 
 export function assignEvents() {
     const roomName = encodeURIComponent(sessionStorage.getItem("roomName"));
-    const LiveConnSocket = new WebSocket(`ws:\/\/${window.location.host}\/ws\/room\/${roomName}\/`);
+    const connWebSocket = new WebSocket(`ws:\/\/${window.location.host}\/ws\/room\/${roomName}\/`);
 
-    LiveConnSocket.onmessage = function(e) {
-
+    connWebSocket.onmessage = function(e) {
         const data = JSON.parse(e.data);
         console.log('onmessage(): ', data);
-        document.querySelector('#chat__log').value = data.message + '\n' + document.querySelector('#chat__log').value;
+
+        if(data.type == 'game_message') {
+            changeContainersState();
+            alert('Game stopped by room admin.')
+        }
+        else {
+            document.querySelector('#chat__log').value = data.message + '\n' + document.querySelector('#chat__log').value;
+        }
     };
 
-    LiveConnSocket.onclose = function(e) {
+    connWebSocket.onclose = function(e) {
         console.error('Chat socket closed unexpectedly');
     };
 
@@ -27,17 +34,17 @@ export function assignEvents() {
             if(chatMessage == "") { return; }
 
             const messageContent = {
-                'type': 'ludo_message',
+                'type': 'chat_message',
                 'message': chatMessage
             };
 
-            LiveConnSocket.send(JSON.stringify(messageContent));
+            connWebSocket.send(JSON.stringify(messageContent));
 
             messageInput.value = ''; // Clean input field
         });
 
     document.getElementById("game__stop_game_button")
-        .addEventListener("click", event => eventsFunCollector.stopGameEvent(event));
+        .addEventListener("click", event => eventsFunCollector.stopGameEvent(event, connWebSocket));
 
     document.getElementById("create_room__submit_button")
         .addEventListener("click", event => eventsFunCollector.createRoomEvent(event));
