@@ -51,7 +51,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
             'type': 'chat_message',
             'message': message
         }))
-
+    """
+    Messages commands:
+    message: "stopServer"
+    message: "changeContainersState"
+    """
     # Receive message from room group
     async def game_message(self, event):
         message = event['message']

@@ -7,9 +7,11 @@ export function assignEvents() {
 
     connWebSocket.onmessage = function(e) {
         const data = JSON.parse(e.data);
-        console.log('onmessage(): ', data);
-
-        if(data.type == 'game_message') {
+        console.log(data);
+        if(data.type == 'game_message' && data.message == "changeContainersState") {
+            changeContainersState();
+        }
+        else if(data.type == 'game_message' && data.message == "stopServer") {
             changeContainersState();
             alert('Game stopped by room admin.')
         }

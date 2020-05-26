@@ -15,47 +15,6 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render  # only form base view
 
 
-PAWN_NOT_ON_THE_BOARD_STATUS = -1
-PAWN_AT_THE_FINISH_LINE_STATUS = -2
-PAWN_INDEX_TO_COLOR = ['blue', 'yellow', 'red', 'green', 'watcher']
-PAWN_COLOR_TO_INDEX = {'blue': 0, 'yellow': 1, 'red': 2, 'green': 3, 'watcher': 4}
-BOARD_FIELDS_DESC = {  # according to board prepared by Domi
-    'blue': {
-        'start_field': 3,
-        'stop_field': 2,
-    },
-    'yellow': {
-        'start_field': 13,
-        'stop_field': 12,
-    },
-    'red': {
-        'start_field': 23,
-        'stop_field': 22,
-    },
-    'green': {
-        'start_field': 33,
-        'stop_field': 32,
-    },
-}
-
-
-# EMPTY_BOARD = {
-#     'game_started': False,
-#     'pawns': {
-#         'blue': [PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD],
-#         'yellow': [PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD],
-#         'red': [PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD],
-#         'green': [PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD, PAWN_NOT_ON_THE_BOARD]
-#     },
-#     'user_playing_color': None,
-# }
-
-
-# @csrf_exempt
-# def index_view(request):
-#     return render(request, 'game/index.html')
-
-
 @csrf_exempt
 def check_token(request):
     """
@@ -123,12 +82,3 @@ def stop_game(request):
 
         return JsonResponse(serializer.errors, status=400)
 
-
-@csrf_exempt
-def get_board(request):
-    pass
-
-
-@csrf_exempt
-def roll_cube(request):
-    pass

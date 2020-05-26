@@ -14,39 +14,7 @@ from dlap_ludo.room.serializers import CreateRoomSerializer, JoinRoomSerializer,
 from dlap_ludo.room.models import Room, Player, Game
 
 import json
-
-
-PAWN_NOT_ON_THE_BOARD_STATUS = -1
-PAWN_AT_THE_FINISH_LINE_STATUS = -2
-PAWN_INDEX_TO_COLOR = ['blue', 'yellow', 'red', 'green', 'watcher']
-PAWN_COLOR_TO_INDEX = {'blue': 0, 'yellow': 1, 'red': 2, 'green': 3, 'watcher': 4}
-BOARD_FIELDS_DESC = {  # according to board prepared by Domi
-    'blue': {
-        'start_field': 3,
-        'stop_field': 2,
-    },
-    'yellow': {
-        'start_field': 13,
-        'stop_field': 12,
-    },
-    'red': {
-        'start_field': 23,
-        'stop_field': 22,
-    },
-    'green': {
-        'start_field': 33,
-        'stop_field': 32,
-    },
-}
-
-EMPTY_PLAYER_PAWNS = [PAWN_NOT_ON_THE_BOARD_STATUS, PAWN_NOT_ON_THE_BOARD_STATUS, PAWN_NOT_ON_THE_BOARD_STATUS, PAWN_NOT_ON_THE_BOARD_STATUS]
-
-EMPTY_BOARD = {
-    'pawns': {
-    },
-    'user_playing_color': None,
-}
-
+import dlap_ludo.utils as utils
 
 @csrf_exempt
 def index_view(request):
@@ -94,10 +62,10 @@ def create_room(request):
             except IntegrityError as e:
                 return JsonResponse({'room_name': 'room_name already taken'}, status=400)
 
-            color = PAWN_INDEX_TO_COLOR[0]
+            color = utils.PAWN_INDEX_TO_COLOR[0]
 
-            board = EMPTY_BOARD
-            board['pawns'][color] = EMPTY_PLAYER_PAWNS
+            board = utils.EMPTY_BOARD
+            board['pawns'][color] = utils.EMPTY_PLAYER_PAWNS
             game = Game(is_started=False, board=json.dumps(board), room=room)
             try:
                 game.save()
@@ -153,7 +121,7 @@ def join_room(request):
 
             room_name = serializer.data['room_name']
             player_username = serializer.data['player_username']
-
+            print(room_name, player_username)
             try:
                 room = Room.objects.get(name=room_name)
             except ObjectDoesNotExist:
@@ -170,19 +138,19 @@ def join_room(request):
                 if player_in_room.name == player_username:
                     return JsonResponse({'player_username': 'player_username already exist in this room'}, status=400)
 
-            color = PAWN_INDEX_TO_COLOR[4]
+            color = utils.PAWN_INDEX_TO_COLOR[4]
             is_player = len(players_in_room) < 4 and (not game.is_started)
             if is_player:
-                color = PAWN_INDEX_TO_COLOR[len(players_in_room)]
+                color = utils.PAWN_INDEX_TO_COLOR[len(players_in_room)]
 
             token = get_random_string(length=64)
             # token = '0000000000000000000000000000000000000000000000000000000000000000'
             player = Player(name=player_username, room=room, token=token, color=color)
             player.save()
 
-            if not game.is_started and PAWN_COLOR_TO_INDEX[player.color] < 4:  # is not watcher
+            if not game.is_started and utils.PAWN_COLOR_TO_INDEX[player.color] < 4:  # is not watcher
                 board = json.loads(game.board)
-                board['pawns'][color] = EMPTY_PLAYER_PAWNS
+                board['pawns'][color] = utils.EMPTY_PLAYER_PAWNS
                 game.board = json.dumps(board)
                 game.save()
 

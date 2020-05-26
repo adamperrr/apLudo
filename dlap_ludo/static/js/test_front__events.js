@@ -23,7 +23,7 @@ export function stopGameEvent(event, connWebSocket) {
 
             const wsMessageContent = {
                 'type': 'game_message',
-                'message': 'stop'
+                'message': 'stopServer'
             };
             connWebSocket.send(JSON.stringify(wsMessageContent));
         }
@@ -64,7 +64,6 @@ export function createRoomEvent(event) {
             )
         )
         .then(response => {
-            console.log(response);
             if(response.ok) {
                 alert("Room created (see console)");
 
@@ -130,6 +129,7 @@ export function joinRoomEvent(event) {
             }
             else {
                 let errors = errorsFromResponseBodyToArray(response.body);
+                displayErrors("join_room__errors", errors);
                 console.error("[joinRoomEvent (!response.ok)]", response);
             }
         })
