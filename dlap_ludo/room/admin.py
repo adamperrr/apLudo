@@ -10,7 +10,7 @@ class PlayerAdmin(admin.ModelAdmin):
 
 
 @admin.register(Room)
-class VenueAdmin(admin.ModelAdmin):
+class RoomAdmin(admin.ModelAdmin):
     list_display = ('name', 'is_private')
     ordering = ('name',)
     search_fields = ('name',)

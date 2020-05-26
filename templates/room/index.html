@@ -21,12 +21,16 @@
     <h1 class="display-4">DLAP LUDO</h1>
     <p class="lead">Test Frontend App</p>
 </div>
+<div class="text-center d-none" id="room_name__header">
+    <h2 class="display-5">Room: <b id="room_name__title">Name of room</b></h2>
+</div>
 
 {% include 'partials/room_initialization/create_room__form.html' %}
 {% include 'partials/room_initialization/join_room__form.html' %}
 
-{% include 'partials/room_inside/player_data__table.html' %}
-{% include 'partials/room_inside/game.html' %}
+{% include 'partials/game/player_data.html' %}
+{% include 'partials/game/game.html' %}
+{% include 'partials/game/chat.html' %}
 
 <script type="module" src="{% static 'js/test_front__events.js' %}"></script>
 <script type="module" src="{% static 'js/test_front__assign_events.js' %}"></script>

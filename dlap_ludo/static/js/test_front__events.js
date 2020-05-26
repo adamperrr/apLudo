@@ -1,12 +1,12 @@
 import {changeContainersState, displayErrors, errorsFromResponseBodyToArray} from './test_front__functions.js'
 import * as promisesCollector from './test_front__promises.js'
 
-export function stopGameEvent(event) {
+export function stopGameEvent(event, connWebSocket) {
     event.preventDefault()
 
     let request_message = {
         'token': sessionStorage.getItem("token"),
-        'player_username': sessionStorage.getItem("player_username")
+        'player_username': sessionStorage.getItem("playerUsername")
     };
 
     promisesCollector.stopGamePromise(request_message)
@@ -20,6 +20,12 @@ export function stopGameEvent(event) {
             alert("Game stopped (see console)");
             sessionStorage.clear();
             changeContainersState();
+
+            const wsMessageContent = {
+                'type': 'game_message',
+                'message': 'stopServer'
+            };
+            connWebSocket.send(JSON.stringify(wsMessageContent));
         }
         else {
             console.error("[stopGameEvent (!response.ok)]", response);
@@ -58,12 +64,12 @@ export function createRoomEvent(event) {
             )
         )
         .then(response => {
-            console.log(response);
             if(response.ok) {
                 alert("Room created (see console)");
 
+                sessionStorage.setItem("roomName", room_name);
                 sessionStorage.setItem("token", response.body.token);
-                sessionStorage.setItem("player_username", admin_player_username);
+                sessionStorage.setItem("playerUsername", admin_player_username);
                 sessionStorage.setItem("color", response.body.color);
                 sessionStorage.setItem("isPlayer", response.body.is_player);
                 sessionStorage.setItem("isAdmin", response.body.is_admin);
@@ -112,8 +118,9 @@ export function joinRoomEvent(event) {
             if(response.ok) {
                 alert("Joined room");
 
+                sessionStorage.setItem("roomName", room_name);
                 sessionStorage.setItem("token", response.body.token);
-                sessionStorage.setItem("player_username", player_username);
+                sessionStorage.setItem("playerUsername", player_username);
                 sessionStorage.setItem("color", response.body.color);
                 sessionStorage.setItem("isPlayer", response.body.is_player);
                 sessionStorage.setItem("isAdmin", response.body.is_admin);
@@ -122,6 +129,7 @@ export function joinRoomEvent(event) {
             }
             else {
                 let errors = errorsFromResponseBodyToArray(response.body);
+                displayErrors("join_room__errors", errors);
                 console.error("[joinRoomEvent (!response.ok)]", response);
             }
         })

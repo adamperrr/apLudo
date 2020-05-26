@@ -5,10 +5,22 @@ class Room(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     name = models.CharField(max_length=50, blank=False, unique=True)
     is_private = models.BooleanField(default=True)
-    board = models.TextField(default='') # to store json object
 
     def __str__(self):  # will be displayed in admin menu
         return self.name
+
+    class Meta:
+        ordering = ['created']
+
+
+class Game(models.Model):
+    created = models.DateTimeField(auto_now_add=True)
+    is_started = models.BooleanField(default=False)
+    board = models.TextField(default='') # to store json object
+    room = models.OneToOneField(to=Room, null=True, on_delete=models.SET_NULL)
+
+    def __str__(self):  # will be displayed in admin menu
+        return self.room
 
     class Meta:
         ordering = ['created']

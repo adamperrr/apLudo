@@ -70,3 +70,21 @@ python manage.py createsuperuser --email admin@example.com --username admin
 ```bash
 python manage.py runserver
 ```
+
+8. Run Redis
+```bash
+docker run -p 6379:6379 -d redis:5
+```
+## Docker Redis container usage
+1. Activate channel layer
+```bash
+docker run -p 6379:6379 -d redis:5
+```
+2. List working containers
+```bash
+docker ps
+```
+3. Kill container
+```bash
+docker container kill [CONTAINER_ID]
+```
