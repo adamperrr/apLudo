@@ -2,7 +2,7 @@
 ## Another run
 1. Open repository folder in console (the one where requirements.txt is localized, not the one where static and game directories are)
 ```bash
-cd dlap_ludo
+cd apLudo
 ```
 
 2. Pull repo changes
@@ -33,11 +33,11 @@ python manage.py runserver
 ## First run
 1. Clone repo
 ```bash
-git clone https://github.com/adamperrr/dlap_ludo
+git clone https://github.com/adamperrr/apLudo
 ```
 2. Open repository folder in console (the one where requirements.txt is localized, not the one where static and game directories are)
 ```bash
-cd dlap_ludo
+cd apLudo
 ```
 
 3. Create venv

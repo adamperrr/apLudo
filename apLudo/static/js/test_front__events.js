@@ -1,6 +1,42 @@
 import {changeContainersState, displayErrors, errorsFromResponseBodyToArray} from './test_front__functions.js'
 import * as promisesCollector from './test_front__promises.js'
 
+export function stopGameEvent(event, connWebSocket) {
+    event.preventDefault()
+
+    let request_message = {
+        'token': sessionStorage.getItem("token"),
+        'player_username': sessionStorage.getItem("playerUsername")
+    };
+
+    promisesCollector.stopGamePromise(request_message)
+    .then(
+        r =>  r.json().then(
+            data => ({ok: r.ok, status: r.status, body: data})
+        )
+    )
+    .then(response => {
+        if(response.ok) {
+            alert("Game stopped (see console)");
+            sessionStorage.clear();
+            changeContainersState();
+
+            const wsMessageContent = {
+                'type': 'game_message',
+                'message': 'stopServer'
+            };
+            connWebSocket.send(JSON.stringify(wsMessageContent));
+        }
+        else {
+            console.error("[stopGameEvent (!response.ok)]", response);
+        }
+    })
+    .catch(error => {
+        // Won't catch statuses 400, 404, 500 - it's only for connection errors
+        console.error("[stopGameEvent (catch)]", error);
+     });
+}
+
 export function assignWebSocketEvents(room_name) {
     const roomName = encodeURIComponent(room_name);
     const connWebSocket = new WebSocket(`ws:\/\/${window.location.host}\/ws\/room\/${roomName}\/`);
@@ -46,43 +82,7 @@ export function assignWebSocketEvents(room_name) {
         });
 
     document.getElementById("game__stop_game_button")
-        .addEventListener("click", event => eventsFunCollector.stopGameEvent(event, connWebSocket));
-}
-
-export function stopGameEvent(event, connWebSocket) {
-    event.preventDefault()
-
-    let request_message = {
-        'token': sessionStorage.getItem("token"),
-        'player_username': sessionStorage.getItem("playerUsername")
-    };
-
-    promisesCollector.stopGamePromise(request_message)
-    .then(
-        r =>  r.json().then(
-            data => ({ok: r.ok, status: r.status, body: data})
-        )
-    )
-    .then(response => {
-        if(response.ok) {
-            alert("Game stopped (see console)");
-            sessionStorage.clear();
-            changeContainersState();
-
-            const wsMessageContent = {
-                'type': 'game_message',
-                'message': 'stopServer'
-            };
-            connWebSocket.send(JSON.stringify(wsMessageContent));
-        }
-        else {
-            console.error("[stopGameEvent (!response.ok)]", response);
-        }
-    })
-    .catch(error => {
-        // Won't catch statuses 400, 404, 500 - it's only for connection errors
-        console.error("[stopGameEvent (catch)]", error);
-     });
+        .addEventListener("click", event => stopGameEvent(event, connWebSocket));
 }
 
 export function createRoomEvent(event) {

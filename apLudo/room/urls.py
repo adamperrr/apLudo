@@ -1,5 +1,5 @@
 from django.urls import path
-from dlap_ludo.room import views
+from apLudo.room import views
 from rest_framework import routers
 from .views import UserViewSet, GroupViewSet
 
