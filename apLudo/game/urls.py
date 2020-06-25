@@ -1,7 +1,7 @@
 from django.urls import include, path
 from django.contrib import admin
 from rest_framework import routers
-from dlap_ludo.game import views
+from apLudo.game import views
 
 urlpatterns = [
     path('check_token/', views.check_token, name='check_token'),

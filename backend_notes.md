@@ -16,13 +16,13 @@ pip freeze > requirements.txt
 ```bash
 pip install -r requirements.txt
 ```
-4. Start Django project dlap_ludo
+4. Start Django project apLudo
 ```bash
-django-admin startproject dlap_ludo .
+django-admin startproject apLudo .
 ```
 5. Create new app in project
 ```bash
-cd dlap_ludo
+cd apLudo
 django-admin startapp game
 # or
 python ../manage.py startapp game
@@ -36,7 +36,7 @@ python manage.py migrate
 python manage.py createsuperuser --email admin@example.com --username admin
 # to development purposses assign password: admin
 ```
-8. Create serializers.py file in dlap_ludo/game directory
+8. Create serializers.py file in apLudo/game directory
 ```python
 from django.contrib.auth.models import User, Group
 from rest_framework import serializers
@@ -53,7 +53,7 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
         model = Group
         fields = ['url', 'name']
 ```
-9. Update dlap_ludo/game/views.py
+9. Update apLudo/game/views.py
 ```python
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
@@ -78,11 +78,11 @@ class GroupViewSet(viewsets.ModelViewSet):
     serializer_class = GroupSerializer
     permission_classes = [permissions.IsAuthenticated]
 ```
-10. Update dlap_ludo/urls.py with below code
+10. Update apLudo/urls.py with below code
 ```python
 from django.urls import include, path
 from rest_framework import routers
-from dlap_ludo.game import views
+from apLudo.game import views
 
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
@@ -100,8 +100,8 @@ urlpatterns = [
 INSTALLED_APPS = [
     ...
     'rest_framework',
-    'dlap_ludo',
-    'dlap_ludo.game'
+    'apLudo',
+    'apLudo.game'
 ]
 ```
 12. Run server

@@ -6,8 +6,8 @@ from django.utils.crypto import get_random_string
 from rest_framework import viewsets, permissions
 from rest_framework.parsers import JSONParser
 
-from dlap_ludo.room.serializers import TokenSerializer
-from dlap_ludo.room.models import Room, Player
+from apLudo.room.serializers import TokenSerializer
+from apLudo.room.models import Room, Player
 
 from django.db import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist

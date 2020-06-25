@@ -10,11 +10,11 @@ from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import viewsets, permissions
 from rest_framework.parsers import JSONParser
 
-from dlap_ludo.room.serializers import CreateRoomSerializer, JoinRoomSerializer, UserSerializer, GroupSerializer
-from dlap_ludo.room.models import Room, Player, Game
+from apLudo.room.serializers import CreateRoomSerializer, JoinRoomSerializer, UserSerializer, GroupSerializer
+from apLudo.room.models import Room, Player, Game
 
 import json
-import dlap_ludo.utils as utils
+import apLudo.utils as utils
 
 @csrf_exempt
 def index_view(request):

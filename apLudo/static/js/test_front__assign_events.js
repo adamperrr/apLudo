@@ -53,4 +53,6 @@ export function assignEvents() {
 
     document.getElementById("join_room__submit_button")
         .addEventListener("click", event => eventsFunCollector.joinRoomEvent(event));
+
+    window.addEventListener('load', (event) => { changeContainersState(); });
 }

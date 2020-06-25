@@ -1,12 +1,12 @@
 from channels.auth import AuthMiddlewareStack
 from channels.routing import ProtocolTypeRouter, URLRouter
-import dlap_ludo.game.routing
+import apLudo.game.routing
 
 application = ProtocolTypeRouter({
     # (http->django views is added by default)
     'websocket': AuthMiddlewareStack(
         URLRouter(
-            dlap_ludo.game.routing.websocket_urlpatterns
+            apLudo.game.routing.websocket_urlpatterns
         )
     ),
 })
