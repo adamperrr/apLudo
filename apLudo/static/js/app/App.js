@@ -1,5 +1,5 @@
 import * as eventsCollector from './appEvents/index.js'
-import {changeContainersState} from './test_front__functions.js'
+import {changeContainersState} from './appFunctions/index.js'
 
 (function(){
     // Assign events to buttons

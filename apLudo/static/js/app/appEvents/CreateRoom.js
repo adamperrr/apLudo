@@ -1,6 +1,6 @@
-import {changeContainersState, displayErrors, errorsFromResponseBodyToArray} from '../test_front__functions.js'
-import {createRoomPromise} from '../test_front__promises.js'
-import {assignWebSocket} from './assignWebSocket.js'
+import {changeContainersState, displayErrors, errorsFromResponseBodyToArray} from '../appFunctions/index.js'
+import {createRoomPromise} from '../AppPromises.js'
+import {assignWebSocket} from './AssignWebSocket.js'
 
 export function createRoom(event) {
     event.preventDefault()

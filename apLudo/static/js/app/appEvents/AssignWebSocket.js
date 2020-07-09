@@ -1,5 +1,5 @@
-import {changeContainersState} from '../test_front__functions.js'
-import {stopGame} from './stopGame.js'
+import {changeContainersState} from '../appFunctions/index.js'
+import {stopGame} from './StopGame.js'
 
 export function assignWebSocket(room_name) {
     const roomName = encodeURIComponent(room_name);

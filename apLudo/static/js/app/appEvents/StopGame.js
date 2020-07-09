@@ -1,5 +1,5 @@
-import {changeContainersState} from '../test_front__functions.js'
-import {stopGamePromise} from '../test_front__promises.js'
+import {changeContainersState} from '../appFunctions/index.js'
+import {stopGamePromise} from '../AppPromises.js'
 
 export function stopGame(event, connWebSocket) {
     event.preventDefault()
