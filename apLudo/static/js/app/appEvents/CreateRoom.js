@@ -23,11 +23,6 @@ export function createRoom(event) {
         };
 
         createRoomPromise(request_message)
-        .then(
-            r =>  r.json().then(
-                data => ({ok: r.ok, status: r.status, body: data})
-            )
-        )
         .then(response => {
             if(response.ok) {
                 alert("Room created (see console)");
