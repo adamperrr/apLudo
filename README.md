@@ -1,4 +1,4 @@
-# DLAP Ludo
+# apLudo
 ## Another run
 1. Open repository folder in console (the one where requirements.txt is localized, not the one where static and game directories are)
 ```bash
