@@ -25,7 +25,12 @@ source venv/bin/activate
 python manage.py migrate
 ```
 
-5. Run server
+5. Run Redis
+```bash
+docker run -p 6379:6379 -d redis:5
+```
+
+6. Run server
 ```bash
 python manage.py runserver
 ```
