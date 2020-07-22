@@ -1,5 +1,4 @@
 export function errorsFromResponseBodyToArray(responseBody) {
-
     return Object.keys(responseBody).map( key => {
         let forEachResult = [];
 
@@ -16,5 +15,4 @@ export function errorsFromResponseBodyToArray(responseBody) {
 
         return forEachResult;
     });
-
 }

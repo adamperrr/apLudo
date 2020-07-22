@@ -14,10 +14,10 @@ export function changeContainersState() {
         if(response.ok) {
             tokenOk = response.body.token_ok;
             if(tokenOk) {
-                gameState();
+                gameViewState();
             }
             else {
-                creationState();
+                creationViewState();
                 sessionStorage.clear();
             }
         }

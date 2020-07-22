@@ -1,4 +1,4 @@
-export function gameState() {
+export function gameViewState() {
     document.getElementById("create_room__container").classList.add("d-none");
     document.getElementById("join_room__container").classList.add("d-none");
 

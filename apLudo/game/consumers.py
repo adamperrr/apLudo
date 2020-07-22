@@ -3,6 +3,9 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
+    """
+    When JS WebSocket connects to the URL <HOSTNAME>/ws/room/<room_name>/.
+    """
     async def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.room_group_name = 'room_%s' % self.room_name
@@ -15,6 +18,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         await self.accept()
 
+    """
+    When JS WebSocket disconnects.
+    """
     async def disconnect(self, close_code):
         # Leave room group
         await self.channel_layer.group_discard(
@@ -22,7 +28,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
             self.channel_name
         )
 
-    # Receive message from WebSocket
+    """
+    Server receives message from JS WebSocket and sends message to room group (Redis).
+    """
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
 
@@ -40,7 +48,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
             }
         )
 
-    # Receive message from room group
+    """
+    When receives message sent by server to room group with type: chat_message.
+    Sends message to JS WebSocket with type: chat_message.
+    """
     async def chat_message(self, event):
         message = event['message']
 
@@ -51,12 +62,15 @@ class ChatConsumer(AsyncWebsocketConsumer):
             'type': 'chat_message',
             'message': message
         }))
+
     """
-    Messages commands:
-    message: "stopServer"
-    message: "changeContainersState"
+    When receives message sent by server to room group with type: game_message.
+    Sends message to JS WebSocket with type: game_message.
+    
+    Possible commands to send to JS WebSocket.
+    message: "stopServer" - JS should remove all variables and close connection to WS.
+    message: "changeContainersState" - JS should run refresh 
     """
-    # Receive message from room group
     async def game_message(self, event):
         message = event['message']
 
