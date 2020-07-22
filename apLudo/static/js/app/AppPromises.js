@@ -1,12 +1,12 @@
 export function templatePromise(url, request_message) {
-    return fetch(url, {
-        method: "post",
-        headers: new Headers(
-            {
+    let header = new Headers({
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'
-            }
-        ),
+    });
+
+    return fetch(url, {
+        method: "post",
+        headers: header,
         body: JSON.stringify(request_message)
     })
     .then(
