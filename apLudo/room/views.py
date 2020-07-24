@@ -2,7 +2,7 @@ from django.contrib.auth.models import User, Group
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.crypto import get_random_string
-from django.shortcuts import render  # only form base view
+from django.shortcuts import render  # only form index_view
 
 from django.db import IntegrityError, transaction
 from django.core.exceptions import ObjectDoesNotExist

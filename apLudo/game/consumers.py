@@ -1,10 +1,12 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 
+from django.core.exceptions import ObjectDoesNotExist
+from apLudo.room.models import Room, Player, Game
 
 class ChatConsumer(AsyncWebsocketConsumer):
     """
-    When JS WebSocket connects to the URL <HOSTNAME>/ws/room/<room_name>/.
+    Runs when JS WebSocket connects to the URL <HOSTNAME>/ws/room/<room_name>/.
     """
     async def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
@@ -19,7 +21,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
     """
-    When JS WebSocket disconnects.
+    Runs when JS WebSocket disconnects.
     """
     async def disconnect(self, close_code):
         # Leave room group
@@ -29,7 +31,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         )
 
     """
-    Server receives message from JS WebSocket and sends message to room group (Redis).
+    Runs when server receives message from JS WebSocket and sends message to room group (Redis).
     """
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
@@ -72,6 +74,18 @@ class ChatConsumer(AsyncWebsocketConsumer):
     message: "changeContainersState" - JS should run refresh 
     """
     async def game_message(self, event):
+        # try:
+        #     room = Room.objects.get(name=self.room_name)
+        # except ObjectDoesNotExist:
+        #     # return JsonResponse({'room_name': 'room object doesn\'t exist'}, status=400)
+        #     print('room_name: room object doesn\'t exist')
+        #
+        # try:
+        #     game = Game.objects.get(room=room)
+        # except ObjectDoesNotExist:
+        #     # return JsonResponse({'room': 'game object doesn\'t exist'}, status=400)
+        #     print('game: game object doesn\'t exist')
+
         message = event['message']
 
         print("game_message():", event)
