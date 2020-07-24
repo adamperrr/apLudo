@@ -33,8 +33,8 @@ export function joinRoom(event) {
                 sessionStorage.setItem("isPlayer", response.body.is_player);
                 sessionStorage.setItem("isAdmin", response.body.is_admin);
 
-                assignWebSocket(room_name);
-                changeContainersState();
+                let connWebSocket = assignWebSocket(room_name);
+                changeContainersState(connWebSocket);
             }
             else {
                 let errors = errorsFromResponseBodyToArray(response.body);

@@ -19,7 +19,7 @@ export function stopGame(event, connWebSocket) {
 
             connWebSocket.send(JSON.stringify(wsMessageContent));
             sessionStorage.clear();
-            changeContainersState();
+            changeContainersState(connWebSocket);
 
             alert("Game stopped (see console)");
         }

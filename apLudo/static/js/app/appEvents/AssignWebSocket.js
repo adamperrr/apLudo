@@ -8,13 +8,16 @@ export function assignWebSocket(room_name) {
     connWebSocket.onmessage = function(e) {
         const data = JSON.parse(e.data);
         console.log(data);
-        if(data.type == 'game_message' && data.message == "changeContainersState") {
-            changeContainersState();
+        if(data.type === 'game_message' && data.message === "changeContainersState") {
+            changeContainersState(this);
         }
-        else if(data.type == 'game_message' && data.message == "stopServer") {
+        else if(data.type === 'game_message' && data.message === "stopServer") {
             connWebSocket.close();
-            changeContainersState();
+            changeContainersState(this);
             alert('Game stopped by room admin.')
+        }
+        else if(data.type === 'update_board') {
+            console.dir(data.message); // TODO: something
         }
         else {
             document.querySelector('#chat__log').value = data.message + '\n' + document.querySelector('#chat__log').value;
@@ -48,4 +51,6 @@ export function assignWebSocket(room_name) {
 
     document.getElementById("game__stop_game_button")
         .addEventListener("click", event => stopGame(event, connWebSocket));
+
+    return connWebSocket;
 }

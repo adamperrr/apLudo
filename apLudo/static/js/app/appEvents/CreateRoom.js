@@ -34,8 +34,9 @@ export function createRoom(event) {
                 sessionStorage.setItem("isPlayer", response.body.is_player);
                 sessionStorage.setItem("isAdmin", response.body.is_admin);
 
-                assignWebSocket(room_name);
-                changeContainersState();
+                let connWebSocket = assignWebSocket(room_name);
+                console.dir("createRoom():", connWebSocket);
+                changeContainersState(connWebSocket);
             }
             else {
                 let errors = errorsFromResponseBodyToArray(response.body);

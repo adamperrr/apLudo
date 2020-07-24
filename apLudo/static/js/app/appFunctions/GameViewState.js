@@ -19,7 +19,7 @@ export function gameViewState() {
 
     document.getElementById("game__container").classList.remove("d-none");
     if(isAdmin == 'true') {
-        console.log('[gameState()] enabling')
+        console.log('[gameViewState()] Enabling stopGame button for admin.')
         document.getElementById("game__stop_game_button").disabled = false;
     }
 }

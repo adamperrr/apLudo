@@ -3,6 +3,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 
 from django.core.exceptions import ObjectDoesNotExist
 from apLudo.room.models import Room, Player, Game
+from apLudo.game.Gameplay import Gameplay
 
 class ChatConsumer(AsyncWebsocketConsumer):
     """
@@ -74,6 +75,21 @@ class ChatConsumer(AsyncWebsocketConsumer):
     message: "changeContainersState" - JS should run refresh 
     """
     async def game_message(self, event):
+        message = event['message']
+
+        print("game_message():", event)
+
+        # Send message to WebSocket
+        await self.send(text_data=json.dumps({
+            'type': 'game_message',
+            'message': message
+        }))
+
+    """
+    When receives message sent by server to room group with type: update_board.
+    Sends message to JS WebSocket with type: update_board.
+    """
+    async def update_board(self, event):
         # try:
         #     room = Room.objects.get(name=self.room_name)
         # except ObjectDoesNotExist:
@@ -86,12 +102,22 @@ class ChatConsumer(AsyncWebsocketConsumer):
         #     # return JsonResponse({'room': 'game object doesn\'t exist'}, status=400)
         #     print('game: game object doesn\'t exist')
 
-        message = event['message']
+        print("update_board():", event)
 
-        print("game_message():", event)
+        player_username = event['message']['player_username']
+        token = event['message']['token']
+
+        player = Player.objects.filter(name=player_username, token=token)
+        if player is None:
+            message = "Error_WrongUserOrToken"
+        else:
+            # TODO: Add pawn move
+            board = player.room.board
+            # gameplay = Gameplay(board) # not needed to only read board
+            message = board
 
         # Send message to WebSocket
         await self.send(text_data=json.dumps({
-            'type': 'game_message',
+            'type': 'update_board',
             'message': message
         }))
