@@ -144,8 +144,8 @@ def join_room(request):
             game.board = gameplay.get_json_board()
             game.save()
 
-            token = get_random_string(length=64)
-            # token = '0000000000000000000000000000000000000000000000000000000000000000'
+            # token = get_random_string(length=64)
+            token = '0000000000000000000000000000000000000000000000000000000000000000'
             player = Player(name=player_username, room=room, token=token, color=color)
             player.save()
 

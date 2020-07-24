@@ -1,11 +1,9 @@
 import {checkTokenPromise} from '../AppPromises.js'
 import {gameViewState} from './GameViewState.js'
 import {creationViewState} from './CreationViewState.js'
+import createAppWebSocket from '../AppWebSocket.js'
 
-export function changeContainersState(connWebSocket) {
-console.dir("_________________________________");
-console.dir("_________________________________");
-console.dir("_________________________________");
+export function changeContainersState() {
     let tokenOk = false;
     let requestMessage = {
         'player_username': sessionStorage.getItem("playerUsername"),
@@ -17,13 +15,24 @@ console.dir("_________________________________");
         if(response.ok) {
             tokenOk = response.body.token_ok;
             if(tokenOk) {
-                let wsMessage = { 'type': 'update_board', 'message': requestMessage };
-                connWebSocket.send(JSON.stringify(wsMessage));
+                const wsContentMessage = {
+                    'type': 'update_board',
+                    'message': requestMessage
+                };
+
+                const appWebSocket = createAppWebSocket(() => {
+                    appWebSocket.send(JSON.stringify(wsContentMessage));
+                });
+
                 gameViewState();
             }
             else {
                 creationViewState();
                 sessionStorage.clear();
+                // TODO:
+//                const appWebSocket = createAppWebSocket(() => {
+//                    appWebSocket.close();
+//                });
             }
         }
         else {

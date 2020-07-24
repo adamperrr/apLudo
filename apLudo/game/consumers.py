@@ -1,9 +1,12 @@
 import json
+
 from channels.generic.websocket import AsyncWebsocketConsumer
 
 from django.core.exceptions import ObjectDoesNotExist
 from apLudo.room.models import Room, Player, Game
 from apLudo.game.Gameplay import Gameplay
+
+from asgiref.sync import sync_to_async
 
 class ChatConsumer(AsyncWebsocketConsumer):
     """
@@ -104,17 +107,25 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         print("update_board():", event)
 
-        player_username = event['message']['player_username']
+        player_username = event['message']['player_username']  # TODO: use serializer
         token = event['message']['token']
 
-        player = Player.objects.filter(name=player_username, token=token)
+        try:
+            player = Player.objects.get(name=player_username, token=token)
+        except ObjectDoesNotExist:
+            player = None  # Goes to if condition
+
         if player is None:
-            message = "Error_WrongUserOrToken"
+            message = "Error_WrongUserOrToken_NoPlayerFound"
         else:
             # TODO: Add pawn move
-            board = player.room.board
-            # gameplay = Gameplay(board) # not needed to only read board
-            message = board
+
+            try:
+                board = Game.objects.get(room=player.room).board
+                # gameplay = Gameplay(board) # not needed to only read board
+                message = board
+            except ObjectDoesNotExist:
+                message = "Error_WrongUserOrToken_NoBoardFound"
 
         # Send message to WebSocket
         await self.send(text_data=json.dumps({

@@ -1,6 +1,5 @@
 import {changeContainersState, displayErrors, errorsFromResponseBodyToArray} from '../appFunctions/index.js'
 import {createRoomPromise} from '../AppPromises.js'
-import {assignWebSocket} from './AssignWebSocket.js'
 
 export function createRoom(event) {
     event.preventDefault()
@@ -34,9 +33,7 @@ export function createRoom(event) {
                 sessionStorage.setItem("isPlayer", response.body.is_player);
                 sessionStorage.setItem("isAdmin", response.body.is_admin);
 
-                let connWebSocket = assignWebSocket(room_name);
-                console.dir("createRoom():", connWebSocket);
-                changeContainersState(connWebSocket);
+                changeContainersState();
             }
             else {
                 let errors = errorsFromResponseBodyToArray(response.body);
