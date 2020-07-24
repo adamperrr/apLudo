@@ -1,24 +1,38 @@
 import {checkTokenPromise} from '../AppPromises.js'
-import {gameState} from './GameState.js'
-import {creationState} from './CreationState.js'
+import {gameViewState} from './GameViewState.js'
+import {creationViewState} from './CreationViewState.js'
+import createAppWebSocket from '../AppWebSocket.js'
 
 export function changeContainersState() {
     let tokenOk = false;
-    let request_message = {
+    let requestMessage = {
         'player_username': sessionStorage.getItem("playerUsername"),
         'token': sessionStorage.getItem("token")
     };
 
-    checkTokenPromise(request_message)
+    checkTokenPromise(requestMessage)
     .then(response => {
         if(response.ok) {
             tokenOk = response.body.token_ok;
             if(tokenOk) {
-                gameState();
+                const wsContentMessage = {
+                    'type': 'update_board',
+                    'message': requestMessage
+                };
+
+                const appWebSocket = createAppWebSocket(() => {
+                    appWebSocket.send(JSON.stringify(wsContentMessage));
+                });
+
+                gameViewState();
             }
             else {
-                creationState();
+                creationViewState();
                 sessionStorage.clear();
+                // TODO:
+//                const appWebSocket = createAppWebSocket(() => {
+//                    appWebSocket.close();
+//                });
             }
         }
         else {

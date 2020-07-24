@@ -1,7 +1,8 @@
 import {changeContainersState} from '../appFunctions/index.js'
 import {stopGamePromise} from '../AppPromises.js'
+import createAppWebSocket from '../AppWebSocket.js'
 
-export function stopGame(event, connWebSocket) {
+export function stopGame(event) {
     event.preventDefault()
 
     let request_message = {
@@ -12,13 +13,17 @@ export function stopGame(event, connWebSocket) {
     stopGamePromise(request_message)
     .then(response => {
         if(response.ok) {
-            const wsMessageContent = {
+            const wsContentMessage = {
                 'type': 'game_message',
                 'message': 'stopServer'
             };
 
-            connWebSocket.send(JSON.stringify(wsMessageContent));
+            const appWebSocket = createAppWebSocket(() => {
+                appWebSocket.send(JSON.stringify(wsContentMessage));
+            });
+
             sessionStorage.clear();
+
             changeContainersState();
 
             alert("Game stopped (see console)");
