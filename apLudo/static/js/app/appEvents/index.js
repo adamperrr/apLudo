@@ -1,3 +1,3 @@
-export * from './CreateRoom.js';
-export * from './JoinRoom.js';
-export * from './StopGame.js';
+export * from './createRoom.js';
+export * from './joinRoom.js';
+export * from './stopGame.js';

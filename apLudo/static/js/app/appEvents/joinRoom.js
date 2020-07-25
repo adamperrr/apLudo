@@ -1,5 +1,5 @@
-import {changeContainersState, displayErrors, errorsFromResponseBodyToArray} from '../appFunctions/index.js'
-import {joinRoomPromise} from '../AppPromises.js'
+import {changeViewState, displayCreationViewErrors, rewriteErrorsFromResponseBodyToArray} from '../appFunctions/index.js'
+import {joinRoomPromise} from '../promises.js'
 
 export function joinRoom(event) {
     event.preventDefault()
@@ -12,7 +12,7 @@ export function joinRoom(event) {
     if(player_username === "") { errors.push("Player username can't be empty.") }
 
     if(errors.length > 0) {
-        displayErrors("join_room__errors", errors);
+        displayCreationViewErrors("join_room__errors", errors);
     }
     else{
         let request_message = {
@@ -23,7 +23,7 @@ export function joinRoom(event) {
         joinRoomPromise(request_message)
         .then(response => {
             if(response.ok) {
-                alert("Joined room");
+                console.log("Joined room");
 
                 sessionStorage.setItem("roomName", room_name);
                 sessionStorage.setItem("token", response.body.token);
@@ -32,11 +32,11 @@ export function joinRoom(event) {
                 sessionStorage.setItem("isPlayer", response.body.is_player);
                 sessionStorage.setItem("isAdmin", response.body.is_admin);
 
-                changeContainersState();
+                changeViewState();
             }
             else {
-                let errors = errorsFromResponseBodyToArray(response.body);
-                displayErrors("join_room__errors", errors);
+                let errors = rewriteErrorsFromResponseBodyToArray(response.body);
+                displayCreationViewErrors("join_room__errors", errors);
                 console.error("[joinRoom (!response.ok)]", response);
             }
         })

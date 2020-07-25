@@ -1,7 +1,7 @@
 import {stopGame} from '../appEvents/index.js'
-import createAppWebSocket from '../AppWebSocket.js'
+import getRoomWebSocket from '../getRoomWebSocket.js'
 
-export function gameViewState() {
+export function changeToGameViewState() {
     // Hide create room and join room forms
     document.getElementById("create_room__container").classList.add("d-none");
     document.getElementById("join_room__container").classList.add("d-none");
@@ -25,7 +25,7 @@ export function gameViewState() {
 
     document.getElementById("game__container").classList.remove("d-none");
     if(isAdmin == 'true') {
-        console.log('[gameViewState()] Enabling stopGame button for admin.')
+        // console.log('[changeToGameViewState] Enabling stopGame button for admin.')
         document.getElementById("game__stop_game_button").disabled = false;
     }
 
@@ -48,8 +48,8 @@ export function gameViewState() {
             'message': chatMessage
         };
 
-        const appWebSocket = createAppWebSocket(() => {
-            appWebSocket.send(JSON.stringify(wsContentMessage));
+        const roomWebSocket = getRoomWebSocket(() => {
+            roomWebSocket.send(JSON.stringify(wsContentMessage));
         });
 
         messageInput.value = ''; // Clean input field

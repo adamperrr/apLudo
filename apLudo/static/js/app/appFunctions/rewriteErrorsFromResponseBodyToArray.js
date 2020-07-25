@@ -1,4 +1,4 @@
-export function errorsFromResponseBodyToArray(responseBody) {
+export function rewriteErrorsFromResponseBodyToArray(responseBody) {
     return Object.keys(responseBody).map( key => {
         let forEachResult = [];
 
@@ -11,7 +11,7 @@ export function errorsFromResponseBodyToArray(responseBody) {
             forEachResult = [...forEachResult, `${key}: ${responseBody[key]}`];
         }
 
-        console.log('[errorsFromResponseBodyToArray()]', forEachResult);
+        console.log('[rewriteErrorsFromResponseBodyToArray]', forEachResult);
 
         return forEachResult;
     });
