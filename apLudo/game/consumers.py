@@ -8,10 +8,12 @@ from apLudo.game.Gameplay import Gameplay
 
 from channels.db import database_sync_to_async
 
+
 class ChatConsumer(AsyncWebsocketConsumer):
     """
     Runs when JS WebSocket connects to the URL <HOSTNAME>/ws/room/<room_name>/.
     """
+
     async def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.room_group_name = 'room_%s' % self.room_name
@@ -27,6 +29,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     """
     Runs when JS WebSocket disconnects.
     """
+
     async def disconnect(self, close_code):
         # Leave room group
         await self.channel_layer.group_discard(
@@ -37,6 +40,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     """
     Runs when server receives message from JS WebSocket and sends message to room group (Redis).
     """
+
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
 
@@ -58,6 +62,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     When receives message sent by server to room group with type: chat_message.
     Sends message to JS WebSocket with type: chat_message.
     """
+
     async def chat_message(self, event):
         message = event['message']
 
@@ -77,6 +82,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     message: "stopServer" - JS should remove all variables and close connection to WS.
     message: "changeContainersState" - JS should run refresh 
     """
+
     async def game_message(self, event):
         message = event['message']
 
@@ -95,11 +101,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
         except ObjectDoesNotExist:
             player = None  # Goes to if condition
 
-        return player\
-
+        return player
 
     @database_sync_to_async
-    def get_board_in_message_by_player(self, player_username, token):
+    def get_board_in_message_by_player(self, player):
         try:
             board = Game.objects.get(room=player.room).board
             message = board  # Usage of class Gameplay is not needed to only read board
@@ -118,12 +123,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         print("update_board():", event)
 
-        player = self.get_player_by_username_and_token(player_username, token)
+        player = await self.get_player_by_username_and_token(player_username, token)
+
         if player is None:
             message = "Error_WrongUserOrToken_NoPlayerFound"
         else:
             # TODO: Add pawn move
-            message = self.get_board_in_message_by_player(player)
+            message = await self.get_board_in_message_by_player(player)
 
         # Send message to WebSocket
         await self.send(text_data=json.dumps({
