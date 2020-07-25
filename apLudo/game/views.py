@@ -1,19 +1,9 @@
-from django.contrib.auth.models import User, Group
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.utils.crypto import get_random_string
-
-from rest_framework import viewsets, permissions
 from rest_framework.parsers import JSONParser
-
 from apLudo.room.serializers import TokenSerializer
-from apLudo.room.models import Room, Player
-
-from django.db import IntegrityError
+from apLudo.room.models import Player
 from django.core.exceptions import ObjectDoesNotExist
-
-from django.shortcuts import render  # only form base view
-
 
 @csrf_exempt
 def check_token(request):

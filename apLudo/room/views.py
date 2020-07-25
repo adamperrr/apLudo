@@ -3,18 +3,12 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.crypto import get_random_string
 from django.shortcuts import render  # only form index_view
-
 from django.db import IntegrityError, transaction
 from django.core.exceptions import ObjectDoesNotExist
-
 from rest_framework import viewsets, permissions
 from rest_framework.parsers import JSONParser
-
 from apLudo.room.serializers import CreateRoomSerializer, JoinRoomSerializer, UserSerializer, GroupSerializer
 from apLudo.room.models import Room, Player, Game
-
-# import json
-# import apLudo.utils as utils
 from apLudo.game.Gameplay import Gameplay
 
 @csrf_exempt
@@ -121,7 +115,7 @@ def join_room(request):
 
             room_name = serializer.data['room_name']
             player_username = serializer.data['player_username']
-            print(room_name, player_username)
+
             try:
                 room = Room.objects.get(name=room_name)
             except ObjectDoesNotExist:
@@ -144,8 +138,8 @@ def join_room(request):
             game.board = gameplay.get_json_board()
             game.save()
 
-            # token = get_random_string(length=64)
-            token = '0000000000000000000000000000000000000000000000000000000000000000'
+            token = get_random_string(length=64)
+            # token = '0000000000000000000000000000000000000000000000000000000000000000'
             player = Player(name=player_username, room=room, token=token, color=color)
             player.save()
 

@@ -1,6 +1,9 @@
 import json
 
 class Gameplay:
+    # Constants
+    MAX_PLAYERS_NUM = 4
+
     # Private constants
     __PAWN_NOT_ON_THE_BOARD_STATUS = -1
     __PAWN_AT_THE_FINISH_LINE_STATUS = -2
@@ -48,8 +51,8 @@ class Gameplay:
             self.__last_added_color = self.__PAWN_INDEX_TO_COLOR[ last_pawn_index ]
 
     def add_player(self, player_index, is_game_started):
-        color = self.__PAWN_INDEX_TO_COLOR[4]
-        is_player = player_index < 4 and (not is_game_started)
+        color = self.__PAWN_INDEX_TO_COLOR[self.MAX_PLAYERS_NUM]
+        is_player = player_index < self.MAX_PLAYERS_NUM and (not is_game_started)
         if is_player:
             color = self.__PAWN_INDEX_TO_COLOR[player_index]
             self.__board['pawns'][color] = self.__EMPTY_PLAYER_PAWNS

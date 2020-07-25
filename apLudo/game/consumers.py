@@ -6,7 +6,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from apLudo.room.models import Room, Player, Game
 from apLudo.game.Gameplay import Gameplay
 
-from asgiref.sync import sync_to_async
+from channels.db import database_sync_to_async
 
 class ChatConsumer(AsyncWebsocketConsumer):
     """
@@ -88,44 +88,42 @@ class ChatConsumer(AsyncWebsocketConsumer):
             'message': message
         }))
 
-    """
-    When receives message sent by server to room group with type: update_board.
-    Sends message to JS WebSocket with type: update_board.
-    """
-    async def update_board(self, event):
-        # try:
-        #     room = Room.objects.get(name=self.room_name)
-        # except ObjectDoesNotExist:
-        #     # return JsonResponse({'room_name': 'room object doesn\'t exist'}, status=400)
-        #     print('room_name: room object doesn\'t exist')
-        #
-        # try:
-        #     game = Game.objects.get(room=room)
-        # except ObjectDoesNotExist:
-        #     # return JsonResponse({'room': 'game object doesn\'t exist'}, status=400)
-        #     print('game: game object doesn\'t exist')
-
-        print("update_board():", event)
-
-        player_username = event['message']['player_username']  # TODO: use serializer
-        token = event['message']['token']
-
+    @database_sync_to_async
+    def get_player_by_username_and_token(self, player_username, token):
         try:
             player = Player.objects.get(name=player_username, token=token)
         except ObjectDoesNotExist:
             player = None  # Goes to if condition
 
+        return player\
+
+
+    @database_sync_to_async
+    def get_board_in_message_by_player(self, player_username, token):
+        try:
+            board = Game.objects.get(room=player.room).board
+            message = board  # Usage of class Gameplay is not needed to only read board
+        except ObjectDoesNotExist:
+            message = "Error_WrongUserOrToken_NoBoardFound"
+
+        return message
+
+    """
+    When receives message sent by server to room group with type: update_board.
+    Sends message to JS WebSocket with type: update_board.
+    """
+    async def update_board(self, event):
+        player_username = event['message']['player_username']  # TODO: use serializer
+        token = event['message']['token']
+
+        print("update_board():", event)
+
+        player = self.get_player_by_username_and_token(player_username, token)
         if player is None:
             message = "Error_WrongUserOrToken_NoPlayerFound"
         else:
             # TODO: Add pawn move
-
-            try:
-                board = Game.objects.get(room=player.room).board
-                # gameplay = Gameplay(board) # not needed to only read board
-                message = board
-            except ObjectDoesNotExist:
-                message = "Error_WrongUserOrToken_NoBoardFound"
+            message = self.get_board_in_message_by_player(player)
 
         # Send message to WebSocket
         await self.send(text_data=json.dumps({
