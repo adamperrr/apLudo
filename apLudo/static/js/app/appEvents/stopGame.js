@@ -1,6 +1,6 @@
-import {changeContainersState} from '../appFunctions/index.js'
-import {stopGamePromise} from '../AppPromises.js'
-import createAppWebSocket from '../AppWebSocket.js'
+import {changeViewState} from '../appFunctions/index.js'
+import {stopGamePromise} from '../promises.js'
+import getRoomWebSocket from '../getRoomWebSocket.js'
 
 export function stopGame(event) {
     event.preventDefault()
@@ -18,15 +18,16 @@ export function stopGame(event) {
                 'message': 'stopServer'
             };
 
-            const appWebSocket = createAppWebSocket(() => {
-                appWebSocket.send(JSON.stringify(wsContentMessage));
+            const roomWebSocket = getRoomWebSocket(() => {
+                roomWebSocket.send(JSON.stringify(wsContentMessage));
             });
 
             sessionStorage.clear();
 
-            changeContainersState();
+            changeViewState();
 
-            alert("Game stopped (see console)");
+            // alert("Game stopped (see console)");
+            console.log("Game stopped");
         }
         else {
             console.error("[stopGame (!response.ok)]", response);

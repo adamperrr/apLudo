@@ -1,5 +1,5 @@
-import {changeContainersState, displayErrors, errorsFromResponseBodyToArray} from '../appFunctions/index.js'
-import {createRoomPromise} from '../AppPromises.js'
+import {changeViewState, displayCreationViewErrors, rewriteErrorsFromResponseBodyToArray} from '../appFunctions/index.js'
+import {createRoomPromise} from '../promises.js'
 
 export function createRoom(event) {
     event.preventDefault()
@@ -13,7 +13,7 @@ export function createRoom(event) {
     if(admin_player_username === "") { errors.push("Player username can't be empty.") }
 
     if(errors.length > 0) {
-        displayErrors("create_room__errors", errors);
+        displayCreationViewErrors("create_room__errors", errors);
     } else {
         let request_message = {
             "is_private_room": is_private,
@@ -24,7 +24,8 @@ export function createRoom(event) {
         createRoomPromise(request_message)
         .then(response => {
             if(response.ok) {
-                alert("Room created (see console)");
+                // alert("Room created (see console)");
+                console.log("Room created");
 
                 sessionStorage.setItem("roomName", room_name);
                 sessionStorage.setItem("token", response.body.token);
@@ -33,17 +34,17 @@ export function createRoom(event) {
                 sessionStorage.setItem("isPlayer", response.body.is_player);
                 sessionStorage.setItem("isAdmin", response.body.is_admin);
 
-                changeContainersState();
+                changeViewState();
             }
             else {
-                let errors = errorsFromResponseBodyToArray(response.body);
-                displayErrors("create_room__errors", errors);
-                console.error("[createRoomEvent (!response.ok)]", response);
+                let errors = rewriteErrorsFromResponseBodyToArray(response.body);
+                displayCreationViewErrors("create_room__errors", errors);
+                console.error("[createRoom (!response.ok)]", response);
             }
         })
         .catch(error => {
              // Won't catch statuses 400, 404, 500 - it's only for connection errors
-            console.error("[createRoomEvent (catch)]", error);
+            console.error("[createRoom (catch)]", error);
         });
     }
 }

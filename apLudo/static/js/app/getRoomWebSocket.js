@@ -1,30 +1,32 @@
-import {changeContainersState} from './appFunctions/index.js'
+import {changeViewState} from './appFunctions/index.js'
 import {stopGame} from './appEvents/index.js'
+import {wsRoomUrlPattern} from './properties.js'
 
-export default function createAppWebSocket(onOpenFunc) {
-    let roomName = sessionStorage.getItem("roomName");
+export default function getRoomWebSocket(onOpenCallback) {
+    const roomName = sessionStorage.getItem("roomName");
 
     if(roomName === null) {
         // console.dir("appWebSocket(): roomName not set"); // Don't display
         return;
     }
 
-    roomName = encodeURIComponent(roomName);
-    const appWebSocket = new WebSocket(`ws:\/\/${window.location.host}\/ws\/room\/${roomName}\/`);
+    const uriRoomName = encodeURIComponent(roomName);
+    const wsRoomUrl = wsRoomUrlPattern + '/' + uriRoomName + '/';
+    const appWebSocket = new WebSocket(wsRoomUrl);
 
     appWebSocket.onopen = (event) => {
-        onOpenFunc();
+        onOpenCallback();
     };
 
     appWebSocket.onmessage = (event) => {
         const data = JSON.parse(event.data);
         console.log(data);
         if(data.type === 'game_message' && data.message === "changeContainersState") {
-            changeContainersState();
+            changeViewState();
         }
         else if(data.type === 'game_message' && data.message === "stopServer") {
-            changeContainersState();
-            alert('Game stopped by room admin.')
+            changeViewState();
+            console.log('Game stopped by room admin.')
         }
         else if(data.type === 'update_board') {
             console.dir(data.message); // TODO: something

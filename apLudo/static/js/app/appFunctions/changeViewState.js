@@ -1,9 +1,9 @@
-import {checkTokenPromise} from '../AppPromises.js'
-import {gameViewState} from './GameViewState.js'
-import {creationViewState} from './CreationViewState.js'
-import createAppWebSocket from '../AppWebSocket.js'
+import {checkTokenPromise} from '../promises.js'
+import {changeToGameViewState} from './changeToGameViewState.js'
+import {changeToCreationViewState} from './changeToCreationViewState.js'
+import getRoomWebSocket from '../getRoomWebSocket.js'
 
-export function changeContainersState() {
+export function changeViewState() {
     let tokenOk = false;
     let requestMessage = {
         'player_username': sessionStorage.getItem("playerUsername"),
@@ -20,14 +20,14 @@ export function changeContainersState() {
                     'message': requestMessage
                 };
 
-                const appWebSocket = createAppWebSocket(() => {
-                    appWebSocket.send(JSON.stringify(wsContentMessage));
+                const roomWebSocket = getRoomWebSocket(() => {
+                    roomWebSocket.send(JSON.stringify(wsContentMessage));
                 });
 
-                gameViewState();
+                changeToGameViewState();
             }
             else {
-                creationViewState();
+                changeToCreationViewState();
                 sessionStorage.clear();
                 // TODO:
 //                const appWebSocket = createAppWebSocket(() => {
@@ -36,11 +36,11 @@ export function changeContainersState() {
             }
         }
         else {
-            console.error("[changeContainersState (!response.ok)]", response);
+            console.error("[changeViewState (!response.ok)]", response);
         }
     })
     .catch(error => {
         // Won't catch statuses 400, 404, 500 - it's only for connection errors
-        console.error("[changeContainersState (catch)]", error);
+        console.error("[changeViewState (catch)]", error);
      });
 }

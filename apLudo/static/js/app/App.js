@@ -1,5 +1,5 @@
 import {createRoom, joinRoom} from './appEvents/index.js'
-import {changeContainersState} from './appFunctions/index.js'
+import {changeViewState} from './appFunctions/index.js'
 
 (function(){
     // Assign events to buttons
@@ -7,7 +7,7 @@ import {changeContainersState} from './appFunctions/index.js'
         .addEventListener("click", event => createRoom(event), false);
     document.getElementById("join_room__submit_button")
         .addEventListener("click", event => joinRoom(event), false);
-    window.addEventListener("load", event => changeContainersState(), false);
+    window.addEventListener("load", event => changeViewState(), false);
 
-    changeContainersState();
+    changeViewState();
 })();

@@ -1,4 +1,4 @@
-export function displayErrors(errors_div_id, errors) {
+export function displayCreationViewErrors(errors_div_id, errors) {
     let errors_div = document.getElementById(errors_div_id);
     errors_div.innerHTML = ''; // Remove all child elements of old error list
 

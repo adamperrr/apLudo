@@ -1,4 +1,4 @@
-export function creationViewState() {
+export function changeToCreationViewState() {
     // Creation stage view
     document.getElementById("create_room__container").classList.remove("d-none");
     document.getElementById("join_room__container").classList.remove("d-none");
