@@ -18,7 +18,7 @@ export function changeToGameViewState() {
     document.querySelector("#player_data__value_player_username div:first-child").textContent = sessionStorage.getItem("playerUsername");
     document.querySelector("#player_data__value_token div:first-child").textContent = sessionStorage.getItem("token");
 
-    let isAdmin = sessionStorage.getItem("isAdmin");
+    const isAdmin = sessionStorage.getItem("isAdmin");
     document.querySelector("#player_data__value_is_admin div:first-child").textContent = isAdmin;
     document.querySelector("#player_data__value_is_player div:first-child").textContent = sessionStorage.getItem("isPlayer");
     document.querySelector("#player_data__value_color div:first-child").textContent = sessionStorage.getItem("color");

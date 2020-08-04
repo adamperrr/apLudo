@@ -10,15 +10,15 @@ export default function getRoomWebSocket(onOpenCallback) {
         return;
     }
 
-    const uriRoomName = encodeURIComponent(roomName);
-    const wsRoomUrl = wsRoomUrlPattern + '/' + uriRoomName + '/';
+    const roomNameUri = encodeURIComponent(roomName);
+    const wsRoomUrl = wsRoomUrlPattern + '/' + roomNameUri + '/';
     const appWebSocket = new WebSocket(wsRoomUrl);
 
-    appWebSocket.onopen = (event) => {
+    appWebSocket.addEventListener('open', (event) => {
         onOpenCallback();
-    };
+    });
 
-    appWebSocket.onmessage = (event) => {
+    appWebSocket.addEventListener('message', (event) => {
         const data = JSON.parse(event.data);
         console.log(data);
         if(data.type === 'game_message' && data.message === "changeContainersState") {
@@ -34,11 +34,11 @@ export default function getRoomWebSocket(onOpenCallback) {
         else {
             document.querySelector('#chat__log').value = data.message + '\n' + document.querySelector('#chat__log').value;
         }
-    };
+    });
 
-    appWebSocket.onclose = (event) => {
+    appWebSocket.addEventListener('close', (event) => {
         // console.error('Chat socket closed unexpectedly.'); // Don't display
-    };
+    });
 
     return appWebSocket;
 }

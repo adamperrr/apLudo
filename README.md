@@ -93,3 +93,8 @@ docker ps
 ```bash
 docker container kill [CONTAINER_ID]
 ```
+
+## Clearing database
+```bash
+python manage.py flush
+```

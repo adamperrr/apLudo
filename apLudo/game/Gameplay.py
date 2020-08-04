@@ -27,7 +27,8 @@ class Gameplay:
             'stop_field': 32,
         },
     }
-    __EMPTY_PLAYER_PAWNS = [__PAWN_NOT_ON_THE_BOARD_STATUS, __PAWN_NOT_ON_THE_BOARD_STATUS, __PAWN_NOT_ON_THE_BOARD_STATUS, __PAWN_NOT_ON_THE_BOARD_STATUS]
+    __EMPTY_PLAYER_PAWNS = [__PAWN_NOT_ON_THE_BOARD_STATUS, __PAWN_NOT_ON_THE_BOARD_STATUS,
+                            __PAWN_NOT_ON_THE_BOARD_STATUS, __PAWN_NOT_ON_THE_BOARD_STATUS]
     __EMPTY_BOARD = {
         'pawns': {
         },
@@ -48,7 +49,7 @@ class Gameplay:
             # TODO: checking if init_board is ok
             self.__board = json.loads(init_board_json)
             last_pawn_index = len(self.__board['pawns']) - 1
-            self.__last_added_color = self.__PAWN_INDEX_TO_COLOR[ last_pawn_index ]
+            self.__last_added_color = self.__PAWN_INDEX_TO_COLOR[last_pawn_index]
 
     def add_player(self, player_index, is_game_started):
         color = self.__PAWN_INDEX_TO_COLOR[self.MAX_PLAYERS_NUM]
